@@ -31,3 +31,7 @@ class FileHandler:
         """
         async with aiofiles.open(f"Data/{userID}.json") as f:
             return await json.loads(f.read())
+
+
+if not os.path.exists("Data"):
+    os.mkdir("Data")

@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Files / folders that should be kept private / have no use public
+logs
+Data
