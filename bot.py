@@ -32,7 +32,8 @@ except FileExistsError:
     pass
 with open("logs/bot.log", "w") as f:
     f.write("")
-f = logging.FileHandler("logs/bot.log", "r")
+
+f = logging.FileHandler("logs/bot.log", "w")
 f.setFormatter(formatting)
 log.addHandler(f)
 
