@@ -12,7 +12,7 @@ token = os.getenv("TOKEN")
 prefix = os.getenv("PREFIX")
 
 if prefix is None:
-    prefix = "a!"
+    prefix = "g!"
 
 
 git_repo = (
