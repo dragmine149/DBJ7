@@ -1,6 +1,7 @@
 import platform
 import sys
 from datetime import datetime
+import os
 
 import discord
 import psutil
@@ -95,7 +96,7 @@ class Stuff(
         )
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="raise")
+    @commands.hybrid_command(name="raise", hidden=True)
     @commands.is_owner()
     async def raise_error(self, ctx: commands.Context):
         """
