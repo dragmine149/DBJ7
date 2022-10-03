@@ -33,9 +33,9 @@ except FileExistsError:
 with open("logs/bot.log", "w") as f:
     f.write("")
 
-f = logging.FileHandler("logs/bot.log", "w")
-f.setFormatter(formatting)
-log.addHandler(f)
+loggingFileData = logging.FileHandler("logs/bot.log", "w")
+loggingFileData.setFormatter(formatting)
+log.addHandler(loggingFileData)
 
 logging.getLogger("discord").setLevel(logging.WARNING)  # mute
 
