@@ -39,6 +39,7 @@ class Stuff(
         )
 
         embed.add_field(name="Creator", value="[Unpredictable#9443] ")
+        embed.add_field(name="Creator", value="[Dragmine149#5048]")
         embed.add_field(
             name="The bot is also open-source!",
             value=config.git_repo,
