@@ -78,3 +78,7 @@ class Accounting(commands.Cog):
             .add_field(name="Balance", value=h["balance"])
             .add_field(name="Debt", value=h["debt"])
         )
+
+
+async def setup(bot: commands.Bot) -> None:
+    await bot.add_cog(Accounting(bot))

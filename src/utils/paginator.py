@@ -3,7 +3,7 @@ import traceback
 from typing import Any, Dict, Optional
 
 import discord
-from discord.ext import commands, menus  
+from discord.ext import commands, menus
 from discord.ext.commands import Paginator as CommandPaginator
 
 
@@ -333,14 +333,14 @@ class Pages(discord.ui.View):
 
     @discord.ui.button(label="Quit", style=discord.ButtonStyle.red)
     async def stop_pages(
-        self, button: discord.ui.Button, interaction: discord.Interaction
+        self, interaction: discord.Interaction, button: discord.ui.Button
     ):
 
         """stops the pagination session."""
 
-        await button.response.defer()
+        await interaction.response.defer()
         # TODO: Fix somehow
-        await button.delete_original_message()
+        await interaction.delete_original_response()
         self.stop()
 
 
