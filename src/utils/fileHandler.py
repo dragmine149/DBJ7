@@ -1,5 +1,6 @@
 import json
 import aiofiles
+import os
 
 
 class FileHandler:
@@ -27,3 +28,6 @@ class FileHandler:
         """
         async with aiofiles.open(f"Data/{userID}.json") as f:
             return await json.loads(f.read())
+
+if not os.path.exists("Data"):
+    os.makedir("Data")
