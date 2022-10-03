@@ -13,7 +13,6 @@ import signal
 import subprocess
 import traceback
 
-
 formatting = logging.Formatter("[%(asctime)s] - [%(levelname)s] [%(name)s] %(message)s")
 
 logging.basicConfig(
