@@ -8,7 +8,7 @@ You can either use make or `python bot.py` beware that you should be inside virt
 
 ## How do I define enviroment variables?
 
-You can use `.env` file by 
+You can use `.env` file by
 
 ```bash
 ENVIROMENT_VARIABLE=VALUE
