@@ -105,13 +105,16 @@ async def on_ready():
     await bot.change_presence(activity=discord.Game(name=f"{config.prefix}help"))
     await bot.tree.sync()
 
-def handler(x,y):
+
+def handler(x, y):
     observer.stop()
     exit(0)
+
 
 signal.signal(signal.SIGINT, handler)
 signal.signal(signal.SIGABRT, handler)
 signal.signal(signal.SIGTERM, handler)
+
 
 async def main():
     try:
