@@ -1,6 +1,6 @@
 # How to collaborate in this repository
 
-I am using poetry if you don't have one follow this [guide](#poetry_guide) and come back later on.
+I am using poetry if you don't have one follow this [guide](#poetry-guide) and come back later on.
 
 ## How to start a bot
 
