@@ -1,4 +1,7 @@
-import json
+try:
+    import orjson # speed
+except ImportError:
+    import json
 import os
 
 
