@@ -10,7 +10,7 @@ class FileHandler:
     def __init__(self) -> None:
         pass
 
-    async def SaveFile(self, userID, data):
+    async def SaveFile(self, userID:int, data: dict):
         """Saves a file
 
         Args:
@@ -20,7 +20,7 @@ class FileHandler:
         async with aiofiles.open(f"Data/{userID}.json") as f:
             await f.write(json.dumps(data))
 
-    async def ReadFile(self, userID):
+    async def ReadFile(self, userID: int):
         """Read data from a file
 
         Args:
