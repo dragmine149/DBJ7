@@ -11,7 +11,7 @@ from discord.ext import commands
 from discord.utils import MISSING
 
 sys.path.append("..")
-import config
+from config import config
 
 
 class Error_Handling(commands.Cog):
