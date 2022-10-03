@@ -9,9 +9,9 @@ import asyncio
 import datetime
 import logging
 import os
+import signal
 import subprocess
 import traceback
-import signal
 
 from replit_support import start
 
@@ -117,7 +117,7 @@ async def main():
                 signal.signal(signal.SIGINT, lambda x, y: observer.stop())
                 signal.signal(signal.SIGABRT, lambda x, y: observer.stop())
                 signal.signal(signal.SIGTERM, lambda x, y: observer.stop())
-                
+
                 log.info("Started file watcher")
                 bot.start_time = datetime.datetime.utcnow()
                 get_version()
@@ -134,7 +134,6 @@ async def main():
                 started = True  # break loop
     except KeyboardInterrupt:
         log.info("Exiting...")
-
 
 
 if __name__ == "__main__":
