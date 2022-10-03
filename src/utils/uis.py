@@ -1,10 +1,12 @@
-import typing
 import logging
+import typing
+
 import discord
 from discord import ui
 
-logger = logging.getLogger('bot.log')
-logger.info('initialized')
+logger = logging.getLogger("bot.log")
+logger.info("initialized")
+
 
 class Multiple_Items(ui.View):
     """
@@ -63,15 +65,15 @@ class Dropdown(ui.Select):
 
     async def callback(self, interaction: discord.Interaction):
         await self.callbackFunc(
-            interaction,
-            self.values
+            interaction, self.values
         )  # calls the callback function so the data result can be processed somewhere else
 
-    async def defaultCallback(self, interaction: discord.Interaction, values: list[str]):
+    async def defaultCallback(
+        self, interaction: discord.Interaction, values: list[str]
+    ):
         # The default callback function if nothing selected
         await interaction.response.send_message(f"You choice: {values[0]}")
         logger.warn("Default callback used! Please assign a callback!")
-        
 
 
 class DropdownView(ui.View):
