@@ -105,6 +105,13 @@ async def on_ready():
     await bot.change_presence(activity=discord.Game(name=f"{config.prefix}help"))
     await bot.tree.sync()
 
+def handler(x,y):
+    observer.stop()
+    exit(0)
+
+signal.signal(signal.SIGINT, handler)
+signal.signal(signal.SIGABRT, handler)
+signal.signal(signal.SIGTERM, handler)
 
 async def main():
     try:
@@ -117,12 +124,8 @@ async def main():
                         log.info(f"Loaded extension {extension[:-3]}")
                 await bot.load_extension("jishaku")
                 log.info("Loaded jishaku")
-
+                observer.daemon = True
                 observer.start()
-                signal.signal(signal.SIGINT, lambda x, y: observer.stop())
-                signal.signal(signal.SIGABRT, lambda x, y: observer.stop())
-                signal.signal(signal.SIGTERM, lambda x, y: observer.stop())
-
                 log.info("Started file watcher")
                 bot.start_time = datetime.datetime.utcnow()
                 bot.version_ = get_version()
