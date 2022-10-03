@@ -106,6 +106,18 @@ async def on_ready():
     await bot.tree.sync()
 
 
+@bot.hybrid_command(name="reload", hidden=True)
+@commands.is_owner()
+async def reload(ctx: commands.Context):
+    """
+    Gives owners ability to force reload extensions
+    """
+    for extension in os.listdir("src"):
+        if extension.endswith(".py") and not extension.startswith("_"):
+            bot.reload_extension(f"src.{extension[:-3]}")
+            log.info(f"Reload extension {extension[:-3]}")
+    await ctx.send("Reloaded extensions")
+
 def handler(x, y):
     observer.stop()
     exit(0)
