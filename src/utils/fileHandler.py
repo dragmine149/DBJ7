@@ -1,47 +1,29 @@
 import json
-import os
+import aiofiles
 
 
 class FileHandler:
     def __init__(self) -> None:
         pass
 
-    def SaveFile(self, name, data, useJson=False):
+    async def SaveFile(self, userID, data):
         """Saves a file
 
         Args:
-            name (string): Name of the file to save
+            userID (string): discord userID to save data for
             data (_type_): Data to save in the file
-            useJson (bool, optional): To save in a json format or not. Defaults to False.
         """
-        with open(f"Data/{name}") as f:
-            if not useJson:
-                f.write(data)
-            else:
-                f.write(json.dumps(data))
+        async with aiofiles.open(f"Data/{userID}.json") as f:
+            await f.write(json.dumps(data))
 
-    def ReadFile(self, name, useJson=False):
+    async def ReadFile(self, userID):
         """Read data from a file
 
         Args:
-            name (string): Name of the file to read from
-            useJson (bool, optional): To read the json format or not. Defaults to False.
+            userID (string): discord userID to read data for
 
         Returns:
             _type_: The data stored in the file
         """
-        with open(f"Data/{name}") as f:
-            if not useJson:
-                return f.read()
-            return json.loads(f.read())
-
-    def MakeFolder(self, name):
-        """Makes a folder
-
-        Args:
-            name (string): Name of the folder
-        """
-        try:
-            os.mkdir(f"Data/{name}")
-        except FileExistsError:
-            pass
+        async with aiofiles.open(f"Data/{userID}.json") as f:
+            return await json.loads(f.read())
