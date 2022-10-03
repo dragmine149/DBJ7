@@ -3,7 +3,7 @@ import traceback
 from typing import Any, Dict, Optional
 
 import discord
-from discord.ext import commands, menus
+from discord.ext import commands, menus  
 from discord.ext.commands import Paginator as CommandPaginator
 
 
@@ -339,7 +339,7 @@ class Pages(discord.ui.View):
         """stops the pagination session."""
 
         await button.response.defer()
-
+        # TODO: Fix somehow
         await button.delete_original_message()
         self.stop()
 
