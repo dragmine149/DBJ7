@@ -3,6 +3,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
+
 from config import config
 
 load_dotenv()

@@ -1,10 +1,11 @@
 import json
 import os
 
+
 class FileHandler:
     def __init__(self) -> None:
         pass
-    
+
     def SaveFile(self, name, data, useJson=False):
         """Saves a file
 
@@ -18,7 +19,7 @@ class FileHandler:
                 f.write(data)
             else:
                 f.write(json.dumps(data))
-    
+
     def ReadFile(self, name, useJson=False):
         """Read data from a file
 
@@ -33,7 +34,7 @@ class FileHandler:
             if not useJson:
                 return f.read()
             return json.loads(f.read())
-    
+
     def MakeFolder(self, name):
         """Makes a folder
 
