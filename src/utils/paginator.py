@@ -339,7 +339,6 @@ class Pages(discord.ui.View):
         """stops the pagination session."""
 
         await interaction.response.defer()
-        # TODO: Fix somehow
         await interaction.delete_original_response()
         self.stop()
 
