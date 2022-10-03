@@ -13,8 +13,6 @@ import signal
 import subprocess
 import traceback
 
-from replit_support import start
-
 formatting = logging.Formatter("[%(asctime)s] - [%(levelname)s] [%(name)s] %(message)s")
 
 logging.basicConfig(
@@ -124,9 +122,6 @@ async def main():
                 log.info(
                     f"Started with version {bot.version_} and started at {bot.start_time}"
                 )
-                if os.environ.get("IS_REPLIT"):
-                    start()
-                    log.info("REPLIT detected opening webserver for recieve pinging")
                 try:
                     await bot.start(os.environ["TOKEN"])
                 except discord.errors.HTTPException:
