@@ -1,2 +1,3 @@
 # DBJ7
-Bot films for the discord bot jam
+
+A bot for DBJ7 under a theme gambling!
