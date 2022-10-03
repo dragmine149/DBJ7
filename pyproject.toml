@@ -23,7 +23,6 @@ isort = "^5.10.1"
 autoflake = "^1.4"
 flake8 = "^4.0.1"
 watchdog = "^2.1.9"
-pylint = "^2.14.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

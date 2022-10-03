@@ -134,4 +134,4 @@ class Error_Handling(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(Error_handling(bot))
+    await bot.add_cog(Error_Handling(bot))
