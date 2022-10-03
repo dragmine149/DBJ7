@@ -62,8 +62,6 @@ class FileHandler(FileSystemEventHandler):
                 log.error(traceback.format_exc())
 
 
-
-
 def get_git_revision_short_hash() -> str:
     return (
         subprocess.check_output(["git", "rev-parse", "--short", "HEAD"])
@@ -100,6 +98,7 @@ async def on_ready():
     await bot.change_presence(activity=discord.Game(name=f"{config.prefix}help"))
     await bot.tree.sync()
 
+
 def handler(x, y):
     observer.stop()
     log.info("Exiting... (Keyboard interuppted)")
@@ -123,12 +122,12 @@ async def main():
                         log.info(f"Loaded extension {extension[:-3]}")
                 await bot.load_extension("jishaku")
                 log.info("Loaded jishaku")
-                
+
                 # Start watchdog
                 observer.daemon = True
                 observer.start()
                 log.info("Started file watcher")
-                
+
                 # Log some bot information
                 bot.start_time = datetime.datetime.utcnow()
                 bot.version_ = get_version()
