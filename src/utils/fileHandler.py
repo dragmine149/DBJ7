@@ -30,4 +30,4 @@ class FileHandler:
             return await json.loads(f.read())
 
 if not os.path.exists("Data"):
-    os.makedir("Data")
+    os.mkdir("Data")
