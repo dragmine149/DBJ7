@@ -1,16 +1,18 @@
 try:
-    import orjson # speed
+    import orjson  # speed
 except ImportError:
     import json
+
 import os
 
 import aiofiles
+
 
 class FileHandler:
     def __init__(self) -> None:
         pass
 
-    async def SaveFile(self, userID:int, data: dict) -> None:
+    async def SaveFile(self, userID: int, data: dict) -> None:
         """Saves a file
 
         Args:
