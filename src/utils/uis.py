@@ -1,8 +1,10 @@
 import typing
-
+import logging
 import discord
 from discord import ui
 
+logger = logging.getLogger('bot.log')
+logger.info('initialized')
 
 class Multiple_Items(ui.View):
     """
@@ -55,17 +57,21 @@ class Dropdown(ui.Select):
             max_values=max_values,
             options=options,
         )
-        if callback is None:
+        self.callbackFunc = callback
+        if self.callbackFunc is None:
             self.callbackFunc = self.defaultCallback
 
     async def callback(self, interaction: discord.Interaction):
         await self.callbackFunc(
-            interaction
+            interaction,
+            self.values
         )  # calls the callback function so the data result can be processed somewhere else
 
-    async def defaultCallback(self, interaction: discord.Interaction):
+    async def defaultCallback(self, interaction: discord.Interaction, values: list[str]):
         # The default callback function if nothing selected
-        await interaction.response.send_message(f"You choice: {self.values[0]}")
+        await interaction.response.send_message(f"You choice: {values[0]}")
+        logger.warn("Default callback used! Please assign a callback!")
+        
 
 
 class DropdownView(ui.View):
@@ -83,7 +89,7 @@ class DropdownView(ui.View):
     ):
         """
         Args:
-            callback (function, optional): The function to call (just have the name, not the actuall call) when something happense
+            callback (function, optional): The function to call (just have the name, not the actuall call) when something happense. Requires discord.Interaction input
             placeholder (str, optional): Value to show in the dropdown ui. Defaults to "".
             min_values (int, optional): Minium amount of items the user can select. Defaults to 1.
             max_values (int, optional): Maxium amount of items the user can select. Defaults to 1.
