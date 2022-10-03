@@ -3,6 +3,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
+from config import config
 
 load_dotenv()
 import asyncio
@@ -36,7 +37,7 @@ log.addHandler(f)
 
 logging.getLogger("discord").setLevel(logging.WARNING)  # mute
 
-bot = commands.Bot(command_prefix="", intents=discord.Intents.all())
+bot = commands.Bot(command_prefix=config.prefix, intents=discord.Intents.all())
 bot.log = log
 
 observer = Observer()
@@ -69,6 +70,11 @@ def get_git_revision_short_hash() -> str:
 
 
 def get_version():
+    """Checks if the bot is running on the current latest version.
+
+    Returns:
+        String: Information about twhat the bot is running on
+    """
     is_updated = subprocess.check_output("git status", shell=True).decode("ascii")
 
     if "modified" in is_updated:
@@ -82,11 +88,10 @@ def get_version():
         is_updated = False
 
     if is_updated:
-        bot.version_ = f"latest ({get_git_revision_short_hash()})"
-    elif is_updated is None:
-        bot.version_ = f"{get_git_revision_short_hash()} (modified)"
-    else:
-        bot.version_ = f"old ({get_git_revision_short_hash()}) - not up to date"
+        return f"latest ({get_git_revision_short_hash()})"
+    if is_updated is None:
+        return f"latest ({get_git_revision_short_hash()}) (modified)"
+    return f"old ({get_git_revision_short_hash()}) - not up to date"
 
 
 @bot.event
@@ -95,7 +100,7 @@ async def on_ready():
     log.info(bot.user.name)
     log.info(bot.user.id)
     log.info("------")
-    await bot.change_presence(activity=discord.Game(name="a!help"))
+    await bot.change_presence(activity=discord.Game(name=f"{config.prefix}help"))
     await bot.tree.sync()
 
 
@@ -118,12 +123,12 @@ async def main():
 
                 log.info("Started file watcher")
                 bot.start_time = datetime.datetime.utcnow()
-                get_version()
+                bot.version_ = get_version()
                 log.info(
                     f"Started with version {bot.version_} and started at {bot.start_time}"
                 )
                 try:
-                    await bot.start(os.environ["TOKEN"])
+                    await bot.start(config.token)
                 except discord.errors.HTTPException:
                     log.exception("You likely got ratelimited or bot's token is wrong")
                 started = True  # break loop
