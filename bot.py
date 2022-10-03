@@ -118,6 +118,7 @@ async def reload(ctx: commands.Context):
             log.info(f"Reload extension {extension[:-3]}")
     await ctx.send("Reloaded extensions")
 
+
 def handler(x, y):
     observer.stop()
     exit(0)
