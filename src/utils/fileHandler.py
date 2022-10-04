@@ -1,5 +1,5 @@
 try:
-    import orjson  # speed
+    import orjson as json  # speed
 except ImportError:
     import json
 
@@ -23,8 +23,11 @@ class FileHandler:
         if not os.path.exists("Data/" + parents):
             os.mkdir("Data/" + parents)
 
-        async with aiofiles.open(f"Data/{name}", "w") as f:
-            await f.write(json.dumps(data))
+        async with aiofiles.open(f"Data/{name}", "wb") as f:
+            data = json.dumps(data)  # type: ignore
+            if isinstance(data, str):
+                data = data.encode() # orjson
+            await f.write(data)
 
     async def ReadFile(self, name: str) -> dict:
         """Read data from a file
@@ -39,7 +42,6 @@ class FileHandler:
             raise FileNotFoundError(
                 "User has no data yet (change this error: `src/utils/fileHandler: 39`)"
             )
-
         async with aiofiles.open(f"Data/{name}", "r") as f:
             return json.loads(await f.read())  # type: ignore
 

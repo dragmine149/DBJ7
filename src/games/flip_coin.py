@@ -12,8 +12,8 @@ logger = logging.getLogger("games.flip_coin.log")
 logger.info("Initalised")
 
 class Coin_State(aenum.MultiValueEnum):
-    head = 1, "head" 
-    tail = 0, "tail"
+    heads = 1, "heads"
+    tails = 0, "tails"
     
     def __str__(self):
         return self.name
@@ -35,7 +35,7 @@ class FlipCoin:
     def display_emoji(self) -> str:
         return "🪙"
 
-    def flip_coin(self, unlucky: float = 0.01):
+    def flip_coin(self, unlucky: float = 0.01, user_guess: Coin_State = None) -> bool:
         """
         How this works:
         ---------------
@@ -53,17 +53,21 @@ class FlipCoin:
             logger.warning(
                 f"{self.user.name} ({self.user.id}) has a unlucky percent of < 0.01 (very lucky) automatically set to 0.01!"
             )
+        
+        if user_guess == Coin_State.heads:
+            return random.choices([Coin_State.heads, Coin_State.tails], weights=[1, 1 * (unlucky)])[0] == Coin_State.heads
+        else:
+            return random.choices([Coin_State.heads, Coin_State.tails], weights=[1* unlucky, 1 ])[0] == Coin_State.tails
 
-        land = random.randint(1, 2 * int(unlucky * 100))
-        return land == 1
+        
 
     async def on_button_click(self, Interaction: discord.Interaction, label: str):
-        result = self.flip_coin(0.01)  # will change to unlucky percent meter
+        self.account = await bank.Player_Status.get_by_id(Interaction.user.id)
+        result = self.flip_coin(self.account.unlucky, Coin_State[label.lower()])
         options = ["Heads", "Tails"]
         coins = self.betValue
         await Interaction.response.send_message("Flipping...", ephemeral=True)
         await asyncio.sleep(1.5)
-
         if result:
             await self.Interaction.edit_original_response(
                 content=f"It landed on {label}! You gained {coins} coins", view=None
@@ -76,6 +80,11 @@ class FlipCoin:
                 view=None,
             )
             self.account.money -= coins
+        j = random.choice([0.1,0.2,0.3,0.4,0.5,0.01,0.02,0.03,0.04,0.05])
+        if (j + self.account.unlucky) > 1:
+            self.account.unlucky = 1
+        else:
+            self.account.unlucky += j
 
     async def money_callback(self, value: int):
         self.betValue = value
@@ -97,7 +106,8 @@ class FlipCoin:
         await self.Interaction.edit_original_response(
             content="Please select an option", view=view
         )
-        self.account = await bank.Player_Status.get_by_id(self.user.id)
+        await view.wait()
+        self.choosen = Coin_State(view.choosen.label.lower())
     async def start(self, Interaction: discord.Interaction):
         self.user = Interaction.user
         self.Interaction = Interaction

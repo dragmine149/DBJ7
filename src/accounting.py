@@ -15,6 +15,12 @@ class Accounting(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
         bank.bot = self.bot
+        self.bot.loop.create_task(self.add_non_existing_users())
+        
+    async def add_non_existing_users(self):
+        await self.bot.wait_until_ready()
+        for member in self.bot.get_all_members():
+            await bank.Player_Status.initialize_new_user(member.id) if not member.bot else None
 
     @property
     def display_emoji(self) -> typing.Union[str, bytes, discord.PartialEmoji]:
@@ -30,6 +36,10 @@ class Accounting(commands.Cog):
 
     @account.command()
     async def info(self, ctx: commands.Context, member: discord.User = None):
+        if member.bot:
+            return await ctx.reply(
+                embed=discord.Embed(title="No.",color=discord.Color.red())
+            )
         account = await bank.Player_Status.get_by_id(
             member.id if member else ctx.author.id
         )
@@ -41,7 +51,7 @@ class Accounting(commands.Cog):
         authorBalenceEmbed.add_field(
             name="Balance",
             value=account.money,
-        )
+        ) 
         authorBalenceEmbed.add_field(name="Debt", value=account.debt)
         authorBalenceEmbed.add_field(name="Unluckiness", value=account.unlucky)
 

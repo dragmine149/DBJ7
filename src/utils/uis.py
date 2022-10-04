@@ -7,37 +7,11 @@ from discord import ui
 logger = logging.getLogger("bot.ui.log")
 logger.info("initialized")
 
-
-class Multiple_Buttons(ui.View):
-    """
-    Shows multiple buttons on the message
-    """
-
-    def Add_Button(self, label: typing.Optional[str], callback=None, **kwargs):
-        """
-        Args:
-            label (typing.Optional[str]): The text to show on the button
-            callback (_type_, optional): What function to call once button press. Defaults to None. Required Inputs (Interaction: discord.Interaction, label: str).
-            style (ButtonStyle, optional): The style of the button_. Defaults to ButtonStyle.secondary.
-            disabled (bool, optional): Can the button be clicked?. Defaults to False.
-            url (typing.Optional[str], optional): URL to open on button click. Defaults to None.
-            emoji (typing.Optional[typing.Union[str, Emoji, PartialEmoji]], optional): Emoji to show on the button. Defaults to None.
-            row (typing.Optional[int], optional): What row to put the button on. Defaults to None (automatic).
-        """
-        self.add_item(Button(label, callback, **kwargs))
-
-
 class Button(ui.Button):
     """
     A class to show a button on an object
     """
 
-<<<<<<< HEAD
-    def __init__(self, label: str, **kwargs):
-        super().__init__(label=label, **kwargs)
-        self.label_ = label
-        self.value: typing.Optional[bool] = None
-=======
     def __init__(
         self,
         label: typing.Optional[str],
@@ -55,18 +29,45 @@ class Button(ui.Button):
             row (typing.Optional[int], optional): What row to put the button on. Defaults to None (automatic).
         """
         super().__init__(label=label, **kwargs)
->>>>>>> e48b27c6cc6a67ad6181532a54a2fe07496daaa5
 
         self.callbackFunc = callback
         if self.callbackFunc is None:
             self.callbackFunc = self.defaultCallBack
+        self.clicked: bool = False
 
     async def callback(self, Interaction: discord.Interaction):
         await self.callbackFunc(Interaction, self.label)
-
+        self.clicked = True
     async def defaultCallBack(self, Interaction: discord.Interaction, label: str):
         await Interaction.response.send_message(f"You clicked: {label}")
         logger.warning("Default callback used for button class!")
+
+class Multiple_Buttons(ui.View):
+    """
+    Shows multiple buttons on the message
+    """
+
+    components: typing.List[Button] = []
+
+    def Add_Button(self, label: typing.Optional[str], callback=None, **kwargs) -> None:
+        """
+        Args:
+            label (typing.Optional[str]): The text to show on the button
+            callback (_type_, optional): What function to call once button press. Defaults to None. Required Inputs (Interaction: discord.Interaction, label: str).
+            style (ButtonStyle, optional): The style of the button_. Defaults to ButtonStyle.secondary.
+            disabled (bool, optional): Can the button be clicked?. Defaults to False.
+            url (typing.Optional[str], optional): URL to open on button click. Defaults to None.
+            emoji (typing.Optional[typing.Union[str, Emoji, PartialEmoji]], optional): Emoji to show on the button. Defaults to None.
+            row (typing.Optional[int], optional): What row to put the button on. Defaults to None (automatic).
+        """
+        self.add_item(Button(label, callback, **kwargs))
+        self.components.append(Button(label, callback, **kwargs))
+
+    @property
+    def choosen(self) -> "Button":
+        return [button for button in self.components if button.clicked][0]
+
+
 
 
 # Pretty much taken from the exmaples: https://github.com/Rapptz/discord.py/blob/master/examples/views/dropdown.py just modified

@@ -28,9 +28,9 @@ class Player_Status:
     Also save values on modify :pausechamp:
     """
 
-    user: discord.User
-    money: int
-    debt: typing.Optional[int]
+    user: discord.User = 0
+    money: int = 0
+    debt: typing.Optional[int] = 0
     unlucky: typing.Union[int, float, None] = 0
     last_paid_debt: typing.Union[datetime, None] = None
 
@@ -143,4 +143,4 @@ class Player_Status:
                     },
                 )
             )
-        setattr(self, __name, __value)
+        self.__dict__[__name] = __value
