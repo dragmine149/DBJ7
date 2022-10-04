@@ -105,6 +105,11 @@ async def on_disconnect():
     log.info("Bot disconnected!")
 
 
+@bot.event
+async def on_connect():
+    log.info("Bot connected!")
+
+
 def handler(x, y):
     observer.stop()
     log.info(f"Exiting... (Signal: {x})")
