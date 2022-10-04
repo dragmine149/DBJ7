@@ -98,10 +98,12 @@ async def on_ready():
     await bot.change_presence(activity=discord.Game(name=f"{config.prefix}help"))
     await bot.tree.sync()
 
+
 # Logs when the bot gets disconnected
 @bot.event
 async def on_disconnect():
     log.info("Bot disconnected!")
+
 
 def handler(x, y):
     observer.stop()
