@@ -1,7 +1,7 @@
 import dataclasses
 import logging
 import typing
-from datetime import date, datetime
+from datetime import datetime
 import discord
 from discord.ext import commands
 
