@@ -9,6 +9,9 @@ from .utils import bank
 
 
 class Accounting(commands.Cog):
+    """
+    Accouting group command
+    """
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
         bank.bot = self.bot

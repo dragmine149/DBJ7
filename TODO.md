@@ -4,14 +4,14 @@
 
 - [x] accounting
 - [ ] games
-  - [ ] Flip a coin
+  - [x] Flip a coin
   - [ ] Black Jack?
 
 ## testing
 
-- [ ] accounting
+- [x] accounting
 - [ ] games
-  - [ ] Flip a coin
+  - [x] Flip a coin
   - [ ] Black Jack?
 
 ## ready

@@ -2,12 +2,12 @@
 import discord
 from discord.ext import commands
 
-from utils import uis
+from ..utils import uis
 import random
 import aenum
 
 class Coin_State(aenum.MultiValueEnum):
-    head = 1, "head"
+    head = 1, "head" 
     tail = 0, "tail"
     
     def __str__(self):
