@@ -10,7 +10,6 @@ import discord
 from discord.ext import commands
 from discord.utils import MISSING
 
-sys.path.append("..")
 from config import config
 
 
