@@ -7,9 +7,9 @@ import discord
 from discord.ext import commands
 
 from .utils import uis
+# from .utils.paginator import Pages
 
-
-class game_loader(commands.Cog, name="Games"):
+class game_loader(commands.Cog, name="Games"):  # type: ignore
     """
     Play any game!
     """
@@ -75,18 +75,47 @@ class game_loader(commands.Cog, name="Games"):
         )
         self.msg = await ctx.send("Pick a game to play!", view=view)
 
-    @commands.hybrid_command()
+    def reload_games(self):
+        gameNames = []
+        
+        # Reload all modules first
+        self.games.clear()  # remove old modules
+        for game in self.game_module:  # loop through all modules
+            try:
+                game = importlib.reload(game)  # reload
+                self.games.append(game.game_setup(self.bot))  # add
+                
+                gName = game.__name__.split('.')[2:][0]
+                gameNames.append(gName)
+                
+                self.logger.info(
+                    f"Reloaded {gName} into game_loader")  # log
+                
+            # Check for module removed
+            except ModuleNotFoundError:
+                self.logger.warning(f"Module {game} no longer found in folder!")
+        
+        # Adds new modules if they aren't already loaded
+        for game in os.listdir('src/games'):
+            if game.endswith('.py'):
+                if game[:-3] not in gameNames:
+                    module = importlib.import_module(f'src.games.{game[:-3]}')
+                    self.game_module.append(module)
+                    self.games.append(module.game_setup(self.bot))
+                    
+                    self.logger.info(f"Added {game} into game_loader on the fly!")
+                
+            
+    ## TODO: Find a way to have an alaises so we can run {prefix}rg instead
+    @commands.hybrid_command(hidden=True)
     @commands.is_owner()
     async def reloadgames(self, ctx: commands.Context):
         # Seperate reload command as it reloads different modules than the bot would reload
         """
         OWNER ONLY: Reload the currently loaded games
         """
-        self.games.clear()
-        for game in self.game_module:
-            game = importlib.reload(game)
-            self.games.append(game.game_setup(self.bot))
-            self.logger.info(f"Reloaded {game} into game_loader")
+        self.reload_games()
+        
 
 
 async def setup(bot):
