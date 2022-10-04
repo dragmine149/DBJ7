@@ -5,7 +5,7 @@ from discord.ext import commands
 
 from .utils import bank
 
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 import random
 class Accounting(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
