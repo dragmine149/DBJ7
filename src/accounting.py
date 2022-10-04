@@ -30,20 +30,20 @@ class Accounting(commands.Cog):
         account = await bank.Player_Status.get_by_id(
             member.id if member else ctx.author.id
         )
-        await ctx.reply(
-            embed=(
-                discord.Embed(
-                    title=f"{str(member) if member else str(ctx.author)}'s balance",
-                    color=discord.Color.green(),
-                )
-            )
-            .add_field(
-                name="Balance",
-                value=account.money,
-            )
-            .add_field(name="Debt", value=account.debt)
-            .add_field(name="Unluckiness", value=account.unlucky)
+        
+
+        authorBalenceEmbed = discord.Embed(
+            title=f"{str(member) if member else str(ctx.author)}'s balance",
+            color=discord.Color.green(),
         )
+        authorBalenceEmbed.add_field(
+            name="Balance",
+            value=account.money,
+        )
+        authorBalenceEmbed.add_field(name="Debt", value=account.debt)
+        authorBalenceEmbed.add_field(name="Unluckiness", value=account.unlucky)
+        
+        await ctx.reply(embed=authorBalenceEmbed)
 
     @commands.cooldown(1, 86400, commands.BucketType.user)
     @account.command()
@@ -132,10 +132,9 @@ class Accounting(commands.Cog):
 
         await ctx.reply(
             embed=discord.Embed(
-                discord.Embed(
-                    title="Successfully borrowed money!",
-                    description=f"You've borrowed {amount} and interest is {interest} and that's mean you need to paid {amount + (amount * interest)} and beware that you will unable to gamble if you don't pay any debt in a week!",
-                )
+                title="Successfully borrowed money!",
+                description=f"You've borrowed {amount} and interest is {interest} and that's mean you need to paid {amount + (amount * interest)} and beware that you will unable to gamble if you don't pay any debt in a week!",
+                color=discord.Color.random()
             )
         )
 
