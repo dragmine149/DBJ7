@@ -98,6 +98,10 @@ async def on_ready():
     await bot.change_presence(activity=discord.Game(name=f"{config.prefix}help"))
     await bot.tree.sync()
 
+# Logs when the bot gets disconnected
+@bot.event
+async def on_disconnect():
+    log.info("Bot disconnected!")
 
 def handler(x, y):
     observer.stop()
@@ -141,8 +145,6 @@ async def main():
                 started = True  # break loop
     except KeyboardInterrupt:
         log.info("Exiting... (KeyboardInterrupt)")
-    except (asyncio.exceptions.TimeoutError) as asyncError:
-        log.error(f"Recieved TimeoutAsyncError: {asyncError}")
 
 
 if __name__ == "__main__":
