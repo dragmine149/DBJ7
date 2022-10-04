@@ -13,7 +13,7 @@ class Multiple_Items(ui.View):
     Lets you show multiple buttons on the ui
     """
 
-    def __init__(self, items: typing.List):
+    def __init__(self, items: typing.List[ui.Button]):
         super().__init__(timeout=10)
         self.options = [Button(item) for item in items]
         for item in self.options:
@@ -30,10 +30,11 @@ class Button(ui.Button):
     Lets you show a button on the ui
     """
 
-    def __init__(self, label: str, **kwargs):
+    def __init__(self, label: str, style: discord.ButtonStyle=discord.ButtonStyle.primary, **kwargs):
         super().__init__(label=label, **kwargs)
         self.label_ = label
         self.value: typing.Optional[bool] = None
+        self.style = style
 
     async def callback(self, interaction: discord.Interaction):
         self.value = True
