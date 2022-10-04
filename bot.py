@@ -141,9 +141,11 @@ async def main():
                 started = True  # break loop
     except KeyboardInterrupt:
         log.info("Exiting... (KeyboardInterrupt)")
+    except (asyncio.exceptions.TimeoutError) as asyncError:
+        log.error(f"Recieved TimeoutAsyncError: {asyncError}")
 
 
 if __name__ == "__main__":
     asyncio.run(main())
     observer.stop()
-    log.info("Stopped due to some reason (Not stopped by user)")
+    log.warning("Stopped due to some reason (Not stopped by user)")
