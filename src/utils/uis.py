@@ -4,7 +4,7 @@ import typing
 import discord
 from discord import ui
 
-logger = logging.getLogger("bot.log")
+logger = logging.getLogger("bot.ui.log")
 logger.info("initialized")
 
 
