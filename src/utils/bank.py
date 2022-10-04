@@ -2,6 +2,7 @@ import dataclasses
 import logging
 import typing
 from datetime import datetime
+
 import discord
 from discord.ext import commands
 
@@ -31,7 +32,7 @@ class Player_Status:
     money: int
     debt: typing.Optional[int]
     unlucky: typing.Union[int, float, None] = 0
-    last_paid_debt : typing.Union[datetime,None] = None
+    last_paid_debt: typing.Union[datetime, None] = None
 
     def __str__(self) -> str:
         return f"{self.user} has {self.money} coins and in debt of {self.debt} coins and have unluckiness percent of {self.unlucky}%"
@@ -41,26 +42,40 @@ class Player_Status:
         try:
             data = await FileHandler().ReadFile(f"accounting/{user_id}.json")
         except FileNotFoundError:
-            data = {"money": 20000, "debt": 0, "unlucky": 0, "user": user_id,"last_paid_debt": None}
+            data = {
+                "money": 20000,
+                "debt": 0,
+                "unlucky": 0,
+                "user": user_id,
+                "last_paid_debt": None,
+            }
             await FileHandler().SaveFile(f"accounting/{user_id}.json", data)
         return cls(
             discord.utils.get(bot.users, id=user_id),
             data["money"],
             data["debt"],
             data["unlucky"],
-            datetime.fromtimestamp(data["last_paid_debt"]) if data["last_paid_debt"] else None
+            datetime.fromtimestamp(data["last_paid_debt"])
+            if data["last_paid_debt"]
+            else None,
         )
 
     @classmethod
     async def initialize_new_user(cls, user_id: int):
-        data = {"money": 20000, "debt": 0, "unlucky": 0, "user": user_id, "last_paid_debt": None}
+        data = {
+            "money": 20000,
+            "debt": 0,
+            "unlucky": 0,
+            "user": user_id,
+            "last_paid_debt": None,
+        }
         await FileHandler().SaveFile(f"accounting/{user_id}.json", data)
         return cls(
             discord.utils.get(bot.users, id=user_id),
             data["money"],
             data["debt"],
             data["unlucky"],
-            None
+            None,
         )
 
     def __setattr__(self, __name: str, __value: typing.Any) -> None:
@@ -70,7 +85,15 @@ class Player_Status:
             bot.loop.create_task(
                 FileHandler().SaveFile(
                     f"accounting/{self.user.id}.json",
-                    {"money": __value, "debt": self.debt, "unlucky": self.unlucky, "user": self.user.id,"last_paid_debt":self.last_paid_debt.timestamp() if self.last_paid_debt else None},
+                    {
+                        "money": __value,
+                        "debt": self.debt,
+                        "unlucky": self.unlucky,
+                        "user": self.user.id,
+                        "last_paid_debt": self.last_paid_debt.timestamp()
+                        if self.last_paid_debt
+                        else None,
+                    },
                 )
             )
         elif __name == "debt":
@@ -79,7 +102,15 @@ class Player_Status:
             bot.loop.create_task(
                 FileHandler().SaveFile(
                     f"accounting/{self.user.id}.json",
-                    {"money": self.money, "debt": __value, "unlucky": self.unlucky, "user": self.user.id,"last_paid_debt":self.last_paid_debt.timestamp() if self.last_paid_debt else None},
+                    {
+                        "money": self.money,
+                        "debt": __value,
+                        "unlucky": self.unlucky,
+                        "user": self.user.id,
+                        "last_paid_debt": self.last_paid_debt.timestamp()
+                        if self.last_paid_debt
+                        else None,
+                    },
                 )
             )
         elif __name == "unlucky":
@@ -88,7 +119,15 @@ class Player_Status:
             bot.loop.create_task(
                 FileHandler().SaveFile(
                     f"accounting/{self.user.id}.json",
-                    {"money": self.money, "debt": self.debt, "unlucky": __value, "user": self.user.id,"last_paid_debt":self.last_paid_debt.timestamp() if self.last_paid_debt else None},
+                    {
+                        "money": self.money,
+                        "debt": self.debt,
+                        "unlucky": __value,
+                        "user": self.user.id,
+                        "last_paid_debt": self.last_paid_debt.timestamp()
+                        if self.last_paid_debt
+                        else None,
+                    },
                 )
             )
         elif __name == "last_paid_debt":
@@ -101,7 +140,7 @@ class Player_Status:
                         "unlucky": self.unlucky,
                         "user": self.user.id,
                         "last_paid_debt": __value.timestamp() if __value else None,
-                    }
+                    },
                 )
             )
         setattr(self, __name, __value)
