@@ -1,7 +1,7 @@
+
 import discord
 from discord.ext import commands
 
-import random
 from utils import uis
 
 
@@ -22,18 +22,16 @@ class FlipCoin:
         # TODO: have a button ui to let the user select the amount of money they want to bet.
         await Interaction.edit_original_response(content="Please enter amount to bet")
 
-        buttons = uis.Multiple_Items([
-            uis.Button(
-                label="Head",
-                emoji="head emoji here"
-            ),
-            uis.Button(
-                label="Tail",
-                emoji="🪙"
-            )
-        ])
+        buttons = uis.Multiple_Items(
+            [
+                uis.Button(label="Head", emoji="head emoji here"),
+                uis.Button(label="Tail", emoji="🪙"),
+            ]
+        )
 
-        await Interaction.edit_original_response(content="Please select an option", view=buttons)
+        await Interaction.edit_original_response(
+            content="Please select an option", view=buttons
+        )
 
 
 def game_setup(bot):
