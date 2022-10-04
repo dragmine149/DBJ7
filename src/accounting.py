@@ -115,7 +115,7 @@ class Accounting(commands.Cog):
         else:
             raise error
 
-    @account.commands()
+    @account.command()
     @commands.cooldown(1, 86400, commands.BucketType.user)
     async def borrow_money(self, ctx: commands.Context, amount: int = 1000):
         account = await bank.Player_Status.get_by_id(ctx.author.id)
