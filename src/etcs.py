@@ -55,7 +55,7 @@ class Stuff(
             description=f"{round(self.bot.latency * 1000)} ms from API websocket",
             color=discord.Color.green(),
         )
-        await ctx.send(embed=embed) 
+        await ctx.send(embed=embed)
 
     @commands.hybrid_command(name="status")
     async def status(self, ctx: commands.Context):

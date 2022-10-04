@@ -26,7 +26,7 @@ class FileHandler:
         async with aiofiles.open(f"Data/{name}", "wb") as f:
             data = json.dumps(data)  # type: ignore
             if isinstance(data, str):
-                data = data.encode() # orjson
+                data = data.encode()  # orjson
             await f.write(data)
 
     async def ReadFile(self, name: str) -> dict:

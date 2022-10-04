@@ -61,7 +61,9 @@ class FileHandler(FileSystemEventHandler):
                 log.error(e)
                 log.error(traceback.format_exc())
 
+
 observer.schedule(FileHandler(), "src", recursive=False)
+
 
 def get_git_revision_short_hash() -> str:
     return (

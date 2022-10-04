@@ -7,6 +7,7 @@ from discord import ui
 logger = logging.getLogger("bot.ui.log")
 logger.info("initialized")
 
+
 class Button(ui.Button):
     """
     A class to show a button on an object
@@ -38,9 +39,11 @@ class Button(ui.Button):
     async def callback(self, Interaction: discord.Interaction):
         await self.callbackFunc(Interaction, self.label)
         self.clicked = True
+
     async def defaultCallBack(self, Interaction: discord.Interaction, label: str):
         await Interaction.response.send_message(f"You clicked: {label}")
         logger.warning("Default callback used for button class!")
+
 
 class Multiple_Buttons(ui.View):
     """
@@ -66,8 +69,6 @@ class Multiple_Buttons(ui.View):
     @property
     def choosen(self) -> "Button":
         return [button for button in self.components if button.clicked][0]
-
-
 
 
 # Pretty much taken from the exmaples: https://github.com/Rapptz/discord.py/blob/master/examples/views/dropdown.py just modified
