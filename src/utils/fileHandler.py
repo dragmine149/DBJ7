@@ -12,27 +12,34 @@ class FileHandler:
     def __init__(self) -> None:
         pass
 
-    async def SaveFile(self, userID: int, data: dict) -> None:
+    async def SaveFile(self, name: str, data: dict) -> None:
         """Saves a file
 
         Args:
-            userID (string): discord userID to save data for
+            name (string): Name of folder + Discord UserID
             data (_type_): Data to save in the file
         """
-        async with aiofiles.open(f"Data/{userID}.json", "w") as f:
+        parents = os.path.split(name)[0]
+        if not os.path.exists("Data/" + parents):
+            os.mkdir("Data/" + parents)
+        
+        async with aiofiles.open(f"Data/{name}", "w") as f:
             await f.write(json.dumps(data))
 
-    async def ReadFile(self, userID: int) -> dict:
+    async def ReadFile(self, name: str) -> dict:
         """Read data from a file
 
         Args:
-            userID (string): discord userID to read data for
+            name (string): Name of folder + Discord UserID
 
         Returns:
             _type_: The data stored in the file
         """
-        async with aiofiles.open(f"Data/{userID}.json") as f:
-            return await json.loads(f.read())
+        if not os.path.exists("Data/" + name):
+            return "No Account"
+        
+        async with aiofiles.open(f"Data/{name}", "r") as f:
+            return await json.loads(f.read())  # type: ignore
 
 
 if not os.path.exists("Data"):
