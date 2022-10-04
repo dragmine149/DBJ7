@@ -39,7 +39,7 @@ class FileHandler:
             return "No Account"
 
         async with aiofiles.open(f"Data/{name}", "r") as f:
-            return await json.loads(f.read())  # type: ignore
+            return json.loads(await f.read())  # type: ignore
 
 
 if not os.path.exists("Data"):

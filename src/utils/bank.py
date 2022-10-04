@@ -40,7 +40,7 @@ class Player_Status:
     @classmethod
     async def get_by_id(cls, user_id: int) -> "Player_Status":
         try:
-            data = await FileHandler().ReadFile(f"accounting/{user_id}.json")
+            data = await FileHandler().ReadFile(f"{user_id}.json")
         except FileNotFoundError:
             data = {
                 "money": 20000,
@@ -49,7 +49,7 @@ class Player_Status:
                 "user": user_id,
                 "last_paid_debt": None,
             }
-            await FileHandler().SaveFile(f"accounting/{user_id}.json", data)
+            await FileHandler().SaveFile(f"{user_id}.json", data)
         return cls(
             discord.utils.get(bot.users, id=user_id),
             data["money"],
@@ -69,7 +69,7 @@ class Player_Status:
             "user": user_id,
             "last_paid_debt": None,
         }
-        await FileHandler().SaveFile(f"accounting/{user_id}.json", data)
+        await FileHandler().SaveFile(f"{user_id}.json", data)
         return cls(
             discord.utils.get(bot.users, id=user_id),
             data["money"],
@@ -84,7 +84,7 @@ class Player_Status:
                 raise ValueError("Money cannot be negative")
             bot.loop.create_task(
                 FileHandler().SaveFile(
-                    f"accounting/{self.user.id}.json",
+                    f"{self.user.id}.json",
                     {
                         "money": __value,
                         "debt": self.debt,
@@ -101,7 +101,7 @@ class Player_Status:
                 raise ValueError("Debt cannot be negative")
             bot.loop.create_task(
                 FileHandler().SaveFile(
-                    f"accounting/{self.user.id}.json",
+                    f"{self.user.id}.json",
                     {
                         "money": self.money,
                         "debt": __value,
@@ -118,7 +118,7 @@ class Player_Status:
                 raise ValueError("Unlucky cannot be negative")
             bot.loop.create_task(
                 FileHandler().SaveFile(
-                    f"accounting/{self.user.id}.json",
+                    f"{self.user.id}.json",
                     {
                         "money": self.money,
                         "debt": self.debt,
@@ -133,7 +133,7 @@ class Player_Status:
         elif __name == "last_paid_debt":
             bot.loop.create_task(
                 FileHandler().SaveFile(
-                    f"accounting/{self.user.id}.json",
+                    f"{self.user.id}.json",
                     {
                         "money": self.money,
                         "debt": self.debt,
