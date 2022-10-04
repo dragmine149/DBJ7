@@ -30,7 +30,12 @@ class Button(ui.Button):
     Lets you show a button on the ui
     """
 
-    def __init__(self, label: str, style: discord.ButtonStyle=discord.ButtonStyle.primary, **kwargs):
+    def __init__(
+        self,
+        label: str,
+        style: discord.ButtonStyle = discord.ButtonStyle.primary,
+        **kwargs,
+    ):
         super().__init__(label=label, **kwargs)
         self.label_ = label
         self.value: typing.Optional[bool] = None
