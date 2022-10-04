@@ -1,5 +1,4 @@
 import platform
-import sys
 from datetime import datetime
 
 import discord
@@ -7,10 +6,7 @@ import psutil
 from discord.ext import commands
 
 from .utils import time
-
-sys.path.append("..")
-import config
-
+from config import config
 
 class Stuff(
     commands.Cog,
