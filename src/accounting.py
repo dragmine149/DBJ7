@@ -137,6 +137,17 @@ class Accounting(commands.Cog):
             )
         )
 
+    @borrow_money.error
+    async def borrow_money_error(self,ctx: commands.Context, error):
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.reply(
+                embed=discord.Embed(
+                    title="Borrow money",
+                    description="You can borrow money 1 time per day!",
+                )
+            )
+        else:
+            raise error
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(Accounting(bot))
