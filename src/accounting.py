@@ -30,7 +30,6 @@ class Accounting(commands.Cog):
         account = await bank.Player_Status.get_by_id(
             member.id if member else ctx.author.id
         )
-        
 
         authorBalenceEmbed = discord.Embed(
             title=f"{str(member) if member else str(ctx.author)}'s balance",
@@ -42,7 +41,7 @@ class Accounting(commands.Cog):
         )
         authorBalenceEmbed.add_field(name="Debt", value=account.debt)
         authorBalenceEmbed.add_field(name="Unluckiness", value=account.unlucky)
-        
+
         await ctx.reply(embed=authorBalenceEmbed)
 
     @commands.cooldown(1, 86400, commands.BucketType.user)
@@ -134,7 +133,7 @@ class Accounting(commands.Cog):
             embed=discord.Embed(
                 title="Successfully borrowed money!",
                 description=f"You've borrowed {amount} and interest is {interest} and that's mean you need to paid {amount + (amount * interest)} and beware that you will unable to gamble if you don't pay any debt in a week!",
-                color=discord.Color.random()
+                color=discord.Color.random(),
             )
         )
 

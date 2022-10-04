@@ -5,8 +5,10 @@ import discord
 import psutil
 from discord.ext import commands
 
-from .utils import time
 from config import config
+
+from .utils import time
+
 
 class Stuff(
     commands.Cog,

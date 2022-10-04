@@ -22,7 +22,7 @@ class FileHandler:
         parents = os.path.split(name)[0]
         if not os.path.exists("Data/" + parents):
             os.mkdir("Data/" + parents)
-        
+
         async with aiofiles.open(f"Data/{name}", "w") as f:
             await f.write(json.dumps(data))
 
@@ -37,7 +37,7 @@ class FileHandler:
         """
         if not os.path.exists("Data/" + name):
             return "No Account"
-        
+
         async with aiofiles.open(f"Data/{name}", "r") as f:
             return await json.loads(f.read())  # type: ignore
 
