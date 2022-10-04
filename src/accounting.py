@@ -1,12 +1,13 @@
+import random
 import typing
+from datetime import datetime, timedelta
 
 import discord
 from discord.ext import commands
 
 from .utils import bank
 
-from datetime import datetime, timedelta
-import random
+
 class Accounting(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
@@ -26,24 +27,24 @@ class Accounting(commands.Cog):
 
     @account.command()
     async def info(self, ctx: commands.Context, member: discord.User = None):
-        account = await bank.Player_Status.get_by_id(member.id if member else ctx.author.id)
+        account = await bank.Player_Status.get_by_id(
+            member.id if member else ctx.author.id
+        )
         await ctx.reply(
             embed=(
                 discord.Embed(
-                title=f"{str(member) if member else str(ctx.author)}'s balance",
-                color=discord.Color.green()
+                    title=f"{str(member) if member else str(ctx.author)}'s balance",
+                    color=discord.Color.green(),
                 )
-            ).add_field(
+            )
+            .add_field(
                 name="Balance",
                 value=account.money,
-            ).add_field(
-                name="Debt",
-                value=account.debt
-            ).add_field(
-                name="Unluckiness",
-                value=account.unlucky
             )
+            .add_field(name="Debt", value=account.debt)
+            .add_field(name="Unluckiness", value=account.unlucky)
         )
+
     @commands.cooldown(1, 86400, commands.BucketType.user)
     @account.command()
     async def daily(self, ctx: commands.Context):
@@ -53,10 +54,10 @@ class Accounting(commands.Cog):
             embed=discord.Embed(
                 title="Daily prize!",
                 description="You got 1000 coins for daily prize!",
-                color=discord.Color.green()
+                color=discord.Color.green(),
             )
         )
-    
+
     @daily.error
     async def daily_error(self, ctx: commands.Context, error):
         if isinstance(error, commands.CommandOnCooldown):
@@ -68,10 +69,12 @@ class Accounting(commands.Cog):
             )
         else:
             raise error
-    
+
     @account.command()
     @commands.cooldown(1, 300, commands.BucketType.user)
-    async def pay_debt(self, ctx: commands.Context, pay:int = random.randint(100, 500)):
+    async def pay_debt(
+        self, ctx: commands.Context, pay: int = random.randint(100, 500)
+    ):
         account = await bank.Player_Status.get_by_id(ctx.author.id)
         if pay > account.money:
             return await ctx.reply(
@@ -87,17 +90,21 @@ class Accounting(commands.Cog):
         else:
             account.debt -= pay
             account.last_paid_debt = datetime.now()
-        
+
         await ctx.reply(
             embed=discord.Embed(
-                title="Your debt has been all paid off! Congratulations!" if not account.debt else f"You paid {pay} for your debt and now you can gamble again!",
-                description="Enjoy your gambling and don't make debt next time!" if not account.debt else "Gamble carefully next time and paid these debts off! Also you can risk unable to gamble after 1 week of not paying your debt!",
-                color=discord.Color.green()
+                title="Your debt has been all paid off! Congratulations!"
+                if not account.debt
+                else f"You paid {pay} for your debt and now you can gamble again!",
+                description="Enjoy your gambling and don't make debt next time!"
+                if not account.debt
+                else "Gamble carefully next time and paid these debts off! Also you can risk unable to gamble after 1 week of not paying your debt!",
+                color=discord.Color.green(),
             )
         )
-    
+
     @pay_debt.error
-    async def pay_debt_error(self,ctx: commands.Context, error):
+    async def pay_debt_error(self, ctx: commands.Context, error):
         if isinstance(error, commands.CommandOnCooldown):
             await ctx.reply(
                 embed=discord.Embed(
@@ -107,10 +114,10 @@ class Accounting(commands.Cog):
             )
         else:
             raise error
-    
+
     @account.commands()
     @commands.cooldown(1, 86400, commands.BucketType.user)
-    async def borrow_money(self, ctx: commands.Context, amount:int=1000):
+    async def borrow_money(self, ctx: commands.Context, amount: int = 1000):
         account = await bank.Player_Status.get_by_id(ctx.author.id)
         interest = random.random()
         if (datetime.now() - account.last_paid_debt).days > 7:
@@ -118,11 +125,11 @@ class Accounting(commands.Cog):
                 embed=discord.Embed(
                     title="Borrow money",
                     description="You can't borrow money because you didn't pay your debt for 1 week!",
-                    color=discord.Color.red()
+                    color=discord.Color.red(),
                 )
             )
         account.debt += amount + (amount * interest)
-        
+
         await ctx.reply(
             embed=discord.Embed(
                 discord.Embed(
@@ -131,6 +138,7 @@ class Accounting(commands.Cog):
                 )
             )
         )
-        
+
+
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(Accounting(bot))
