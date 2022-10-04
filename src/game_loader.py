@@ -57,6 +57,13 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
     @commands.hybrid_command()
     async def playgame(self, ctx: commands.Context):
         """Select a game to play"""
+        unlucky = 0  # set to user status
+        if unlucky == 1:
+            await ctx.send(
+                "Oh oh! Seems likes you can't win any games. Come back in a while, you might be more lucky then."
+            )
+            return
+
         gameOptions = []
 
         # Load games into the dropdown.
@@ -83,11 +90,12 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         # Reload all modules first
         self.games.clear()  # remove old modules
         for game in self.game_module:  # loop through all modules
+            gName = game.__name__.split(".")[2:][0]
+
             try:
                 game = importlib.reload(game)  # reload
                 self.games.append(game.game_setup(self.bot))  # add
 
-                gName = game.__name__.split(".")[2:][0]
                 gameNames.append(gName)
 
                 self.logger.info(f"Reloaded {gName} into game_loader")  # log
@@ -95,6 +103,11 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             # Check for module removed
             except ModuleNotFoundError:
                 self.logger.warning(f"Module {game} no longer found in folder!")
+                position = self.game_module.index(game)
+                moduleInfo = self.games.pop(position)
+                self.game_module.remove(game)
+                self.logger.info(f"Removed: {moduleInfo} from game_loader")
+                # TODO: remove from self.games
 
         # Adds new modules if they aren't already loaded
         for game in os.listdir("src/games"):
@@ -115,6 +128,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         OWNER ONLY: Reload the currently loaded games
         """
         self.reload_games()
+        await ctx.reply("Reloaded games", ephemeral=True)
 
 
 async def setup(bot):

@@ -17,7 +17,7 @@ class FileHandler:
 
         Args:
             name (string): Name of folder + Discord UserID
-            data (_type_): Data to save in the file
+            data (dict): Data to save in the file
         """
         parents = os.path.split(name)[0]
         if not os.path.exists("Data/" + parents):
@@ -33,10 +33,12 @@ class FileHandler:
             name (string): Name of folder + Discord UserID
 
         Returns:
-            _type_: The data stored in the file
+            dict: The data stored in the file
         """
         if not os.path.exists("Data/" + name):
-            return "No Account"
+            raise FileNotFoundError(
+                "User has no data yet (change this error: `src/utils/fileHandler: 39`)"
+            )
 
         async with aiofiles.open(f"Data/{name}", "r") as f:
             return json.loads(await f.read())  # type: ignore
