@@ -1,15 +1,16 @@
 import typing
 
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 
-from .utils.fileHandler import FileHandler
+from .utils import bank
 
-
+from datetime import date, datetime, timedelta
+import random
 class Accounting(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
-        self.find_member_not_exists_in_db.start()
+        bank.bot = self.bot
 
     @property
     def display_emoji(self) -> typing.Union[str, bytes, discord.PartialEmoji]:
@@ -23,62 +24,113 @@ class Accounting(commands.Cog):
         if not ctx.subcommand_passed:
             await ctx.send_help(ctx.command)
 
-    @commands.Cog.listener()
-    async def on_member_join(self, member: discord.Member) -> None:
-        try:
-            exists = (
-                True
-                if await FileHandler().ReadFile(f"accounting/{member.id}.json")
-                else True
-            )
-        except FileNotFoundError:
-            exists = False
-
-        if not exists:
-            await FileHandler().SaveFile(
-                f"accounting/{member.id}.json", {"money": 20000}
-            )  # 20k for joining
-            await member.send(
-                embed=discord.Embed(
-                    title="New user detected!",
-                    description="Hello there! You're now getting 20000 coins as a welcome gift!\nGamble wisely and don't ever get yourself in debt!",
-                )
-            )
-
-    @tasks.loop(hours=24)
-    async def find_member_not_exists_in_db(self) -> None:
-        for member in self.bot.get_all_members():
-            try:
-                exists = (
-                    True
-                    if FileHandler().ReadFile(f"accounting/{member.id}.json")
-                    else True
-                )
-            except FileNotFoundError:
-                exists = False
-
-            if not exists:
-                FileHandler().SaveFile(
-                    f"accounting/{member.id}.json",
-                    {"money": 20000},
-                )
-
     @account.command()
-    async def balance(self, ctx: commands.Context, member: discord.User = None):
-        target = member if member else ctx.author
-        h = await FileHandler().ReadFile(f"accounting/{target.id}.json")
-        await ctx.send(
+    async def info(self, ctx: commands.Context, member: discord.User = None):
+        account = await bank.Player_Status.get_by_id(member.id if member else ctx.author.id)
+        await ctx.reply(
             embed=(
-                (
-                    discord.Embed(
-                        title=f"{str(target)}'s account balance",
-                    )
+                discord.Embed(
+                title=f"{str(member) if member else str(ctx.author)}'s balance",
+                color=discord.Color.green()
+                )
+            ).add_field(
+                name="Balance",
+                value=account.money,
+            ).add_field(
+                name="Debt",
+                value=account.debt
+            ).add_field(
+                name="Unluckiness",
+                value=account.unlucky
+            )
+        )
+    @commands.cooldown(1, 86400, commands.BucketType.user)
+    @account.command()
+    async def daily(self, ctx: commands.Context):
+        account = await bank.Player_Status.get_by_id(ctx.author.id)
+        account.money += 1000
+        await ctx.reply(
+            embed=discord.Embed(
+                title="Daily prize!",
+                description="You got 1000 coins for daily prize!",
+                color=discord.Color.green()
+            )
+        )
+    
+    @daily.error
+    async def daily_error(self, ctx: commands.Context, error):
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.reply(
+                embed=discord.Embed(
+                    title="Daily prize!",
+                    description=f"You can get daily prize in {timedelta(seconds=error.cooldown)}!",
                 )
             )
-            .add_field(name="Balance", value=h["balance"])
-            .add_field(name="Debt", value=h["debt"])
+        else:
+            raise error
+    
+    @account.command()
+    @commands.cooldown(1, 300, commands.BucketType.user)
+    async def pay_debt(self, ctx: commands.Context, pay:int = random.randint(100, 500)):
+        account = await bank.Player_Status.get_by_id(ctx.author.id)
+        if pay > account.money:
+            return await ctx.reply(
+                embed=discord.Embed(
+                    title="Pay debt",
+                    description="You don't have enough money to pay debt! Try again next 5 minutes!",
+                )
+            )
+        if pay > account.debt:
+            account.money = pay - account.debt
+            account.debt = 0
+            account.last_paid_debt = None
+        else:
+            account.debt -= pay
+            account.last_paid_debt = datetime.now()
+        
+        await ctx.reply(
+            embed=discord.Embed(
+                title="Your debt has been all paid off! Congratulations!" if not account.debt else f"You paid {pay} for your debt and now you can gamble again!",
+                description="Enjoy your gambling and don't make debt next time!" if not account.debt else "Gamble carefully next time and paid these debts off! Also you can risk unable to gamble after 1 week of not paying your debt!",
+                color=discord.Color.green()
+            )
         )
-
-
+    
+    @pay_debt.error
+    async def pay_debt_error(self,ctx: commands.Context, error):
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.reply(
+                embed=discord.Embed(
+                    title="Pay debt",
+                    description=f"You can pay debt in {timedelta(seconds=error.cooldown)}!",
+                )
+            )
+        else:
+            raise error
+    
+    @account.commands()
+    @commands.cooldown(1, 86400, commands.BucketType.user)
+    async def borrow_money(self, ctx: commands.Context, amount:int=1000):
+        account = await bank.Player_Status.get_by_id(ctx.author.id)
+        interest = random.random()
+        if (datetime.now() - account.last_paid_debt).days > 7:
+            return await ctx.reply(
+                embed=discord.Embed(
+                    title="Borrow money",
+                    description="You can't borrow money because you didn't pay your debt for 1 week!",
+                    color=discord.Color.red()
+                )
+            )
+        account.debt += amount + (amount * interest)
+        
+        await ctx.reply(
+            embed=discord.Embed(
+                discord.Embed(
+                    title="Successfully borrowed money!",
+                    description=f"You've borrowed {amount} and interest is {interest} and that's mean you need to paid {amount + (amount * interest)} and beware that you will unable to gamble if you don't pay any debt in a week!",
+                )
+            )
+        )
+        
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(Accounting(bot))

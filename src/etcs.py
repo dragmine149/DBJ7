@@ -38,7 +38,7 @@ class Stuff(
             title="Credits", description="Thanks to everyone who using this bot!"
         )
 
-        embed.add_field(name="Creator", value="[Unpredictable#9443] ")
+        embed.add_field(name="Creator", value="[timelessnesses#9443] ")
         embed.add_field(name="Creator", value="[Dragmine149#5048]")
         embed.add_field(
             name="The bot is also open-source!",
