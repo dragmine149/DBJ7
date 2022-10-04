@@ -7,14 +7,13 @@ from discord import ui
 logger = logging.getLogger("bot.ui.log")
 logger.info("initialized")
 
+
 class Multiple_Buttons(ui.View):
     """
     Shows multiple buttons on the message
     """
-    def Add_Button(self,
-                   label: typing.Optional[str],
-                   callback=None,
-                   **kwargs):
+
+    def Add_Button(self, label: typing.Optional[str], callback=None, **kwargs):
         """
         Args:
             label (typing.Optional[str]): The text to show on the button
@@ -26,16 +25,18 @@ class Multiple_Buttons(ui.View):
             row (typing.Optional[int], optional): What row to put the button on. Defaults to None (automatic).
         """
         self.add_item(Button(label, callback, **kwargs))
-        
+
 
 class Button(ui.Button):
     """
     A class to show a button on an object
     """
-    def __init__(self, 
-                 label: typing.Optional[str],
-                 callback = None,
-                 **kwargs,
+
+    def __init__(
+        self,
+        label: typing.Optional[str],
+        callback=None,
+        **kwargs,
     ):
         """
         Args:
@@ -48,14 +49,14 @@ class Button(ui.Button):
             row (typing.Optional[int], optional): What row to put the button on. Defaults to None (automatic).
         """
         super().__init__(label=label, **kwargs)
-        
+
         self.callbackFunc = callback
         if self.callbackFunc is None:
             self.callbackFunc = self.defaultCallBack
-        
+
     async def callback(self, Interaction: discord.Interaction):
         await self.callbackFunc(Interaction, self.label)
-    
+
     async def defaultCallBack(self, Interaction: discord.Interaction, label: str):
         await Interaction.response.send_message(f"You clicked: {label}")
         logger.warning("Default callback used for button class!")
@@ -67,11 +68,7 @@ class Dropdown(ui.Select):
     Shows a dropdown menu of items
     """
 
-    def __init__(
-        self,
-        callback=None,
-        **kwargs
-    ):
+    def __init__(self, callback=None, **kwargs):
         super().__init__(**kwargs)
         self.callbackFunc = callback
         if self.callbackFunc is None:
@@ -95,11 +92,7 @@ class DropdownView(ui.View):
     Main dropdown view class
     """
 
-    def __init__(
-        self,
-        callback=None,
-        **kwargs
-    ):
+    def __init__(self, callback=None, **kwargs):
         """
         Args:
             callback (function, optional): The function to call (just have the name, not the actuall call) when something happense. Requires discord.Interaction input
@@ -110,12 +103,7 @@ class DropdownView(ui.View):
         """
         super().__init__()
         self.add_dropdown(callback, **kwargs)
-    
-    def add_dropdown(
-        self,
-        callback=None,
-        **kwargs
-    ):
-        """If you want to add a new dropdown menu in the ui you can. Just not recommened.
-        """
+
+    def add_dropdown(self, callback=None, **kwargs):
+        """If you want to add a new dropdown menu in the ui you can. Just not recommened."""
         self.add_item(Dropdown(callback, **kwargs))

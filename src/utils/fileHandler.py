@@ -36,7 +36,9 @@ class FileHandler:
             dict: The data stored in the file
         """
         if not os.path.exists("Data/" + name):
-            raise FileNotFoundError("User has no data yet (change this error: `src/utils/fileHandler: 39`)")
+            raise FileNotFoundError(
+                "User has no data yet (change this error: `src/utils/fileHandler: 39`)"
+            )
 
         async with aiofiles.open(f"Data/{name}", "r") as f:
             return await json.loads(f.read())  # type: ignore

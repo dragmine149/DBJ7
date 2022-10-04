@@ -59,9 +59,11 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         """Select a game to play"""
         unlucky = 0  # set to user status
         if unlucky == 1:
-            await ctx.send("Oh oh! Seems likes you can't win any games. Come back in a while, you might be more lucky then.")
+            await ctx.send(
+                "Oh oh! Seems likes you can't win any games. Come back in a while, you might be more lucky then."
+            )
             return
-        
+
         gameOptions = []
 
         # Load games into the dropdown.
@@ -89,7 +91,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         self.games.clear()  # remove old modules
         for game in self.game_module:  # loop through all modules
             gName = game.__name__.split(".")[2:][0]
-            
+
             try:
                 game = importlib.reload(game)  # reload
                 self.games.append(game.game_setup(self.bot))  # add
