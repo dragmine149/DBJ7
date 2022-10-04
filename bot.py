@@ -1,3 +1,4 @@
+from sre_constants import SUCCESS
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -31,7 +32,7 @@ logging.basicConfig(
     datefmt="%Y/%m/%d %H:%M:%S",
 )
 
-log = logging.getLogger("")
+log = logging.getLogger("bot")
 log.setLevel(logging.NOTSET)
 
 # Start the logger
@@ -101,8 +102,8 @@ async def on_ready():
 
 def handler(x, y):
     observer.stop()
-    log.info("Exiting... (Keyboard interuppted)")
-    exit(0)
+    log.info(f"Exiting... (Signal: {x})")
+    exit(x)
 
 
 signal.signal(signal.SIGINT, handler)
@@ -140,7 +141,7 @@ async def main():
                     log.exception("You likely got ratelimited or bot's token is wrong")
                 started = True  # break loop
     except KeyboardInterrupt:
-        log.info("Exiting...")
+        log.info("Exiting... (KeyboardInterrupt)")
 
 
 if __name__ == "__main__":

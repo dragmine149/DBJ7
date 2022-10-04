@@ -19,7 +19,7 @@ class FileHandler:
             userID (string): discord userID to save data for
             data (_type_): Data to save in the file
         """
-        async with aiofiles.open(f"Data/{userID}.json") as f:
+        async with aiofiles.open(f"Data/{userID}.json", "w") as f:
             await f.write(json.dumps(data))
 
     async def ReadFile(self, userID: int) -> dict:

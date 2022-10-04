@@ -9,7 +9,7 @@ from discord.ext import commands
 from .utils import uis
 
 
-class game_loader(commands.Cog):
+class game_loader(commands.Cog, name="Games"):
     """
     Play any game!
     """
@@ -18,7 +18,7 @@ class game_loader(commands.Cog):
         self.bot = bot
         self.game_module = []
         self.games = []
-        self.logger = logging.getLogger("bot.log")
+        self.logger = logging.getLogger("bot.game")
         self.logger.info("initialized")
 
         for game in os.listdir("src/games"):
