@@ -46,33 +46,34 @@ bot.log = log
 
 observer = PollingObserver()
 
+cog_log = logging.getLogger("bot.cog.reloader")
 
 class FileHandler(FileSystemEventHandler):
     def on_modified(self, event):
         if not event.is_directory:  # checks for file modified instead of file creation
-            log.info(f"File changed: {event.src_path}")
+            cog_log.info(f"File changed: {event.src_path}")
             if event.src_path.endswith(".py"):
-                log.info("Reloading...")
+                cog_log.info("Reloading...")
                 path = event.src_path.replace("\\", "/").replace("/", ".")[:-3]
                 try:
                     asyncio.run(bot.reload_extension(path))
-                    log.info(f"Reloaded {path}")
+                    cog_log.info(f"Reloaded {path}")
                 except Exception as e:
-                    log.error(f"Failed to reload {path}")
-                    log.error(e)
-                    log.error(traceback.format_exc())
+                    cog_log.error(f"Failed to reload {path}")
+                    cog_log.error(e)
+                    cog_log.error(traceback.format_exc())
+
+game_log = logging.getLogger("bot.game.reloader")
 
 class GameHandler(FileSystemEventHandler):
-    def __init__(self, bot: commands.Bot):
-        self.bot = bot
     def on_modified(self, event):
         if not event.is_directory:  # checks for file modified instead of file creation
-            self.log.info(f"Game source code changed: {event.src_path}")
+            game_log.info(f"Game source code changed: {event.src_path}")
             if event.src_path.endswith(".py") and not event.src_path.startswith("_"):
-                self.log.info("Reloading...")
+                game_log.info("Reloading...")
                 reload = os.path.basename(event.src_path)[:-3]
-                cog: game_loader = self.bot.get_cog('Games')
-                log.info("Reload status "+cog.reload_game(reload))
+                cog: game_loader = bot.get_cog('Games')
+                game_log.info("Reload status "+cog.reload_game(reload))
 
 observer.schedule(FileHandler(), "src", recursive=False)
 observer.schedule(GameHandler(), "src/games", recursive=False)

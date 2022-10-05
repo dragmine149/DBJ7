@@ -1,4 +1,4 @@
-import bank
+from ..utils import bank
 import discord
 from discord.ext import commands
 
