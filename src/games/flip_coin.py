@@ -9,7 +9,7 @@ from discord.ext import commands
 from src.utils import bank, uis
 from src.utils.MoneySelector import MoneySelector
 
-from ..utils import game_template
+from src.utils import game_template
 
 logger = logging.getLogger("games.flip_coin.log")
 logger.info("Initalised")
@@ -77,7 +77,7 @@ class FlipCoin(game_template.Template):
 
     async def on_button_click(self, Interaction: discord.Interaction, label: str):
         self.account = await bank.Player_Status.get_by_id(Interaction.user.id)
-        result = self.flip_coin(self.account.unlucky, Coin_State[label.lower()])
+        result = self.flip_coin(self.account.unlucky, Coin_State[label.lower()])  # type: ignore
         options = ["Heads", "Tails"]
         coins = self.betValue
         await Interaction.response.send_message("Flipping...", ephemeral=True)
