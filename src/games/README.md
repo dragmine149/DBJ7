@@ -97,7 +97,7 @@ Fix: Make sure you have the required above, if you do make sure that the module 
 
 ## Talking with the accountment system
 
-To Be Added, Waiting on more functions to be added.
+Please read </src/utils/README.md> for more information
 
 ## Example files
 
