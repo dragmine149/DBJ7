@@ -62,6 +62,10 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
 
                 return  # stops the loop and the function
 
+    async def game_cancel(self, Interaction: discord.Interaction, values: list[str]):
+        await Interaction.response.send_message("Canceled playing...", ephemeral=True)
+        # delete old messages?
+
     async def game_preLoad(self, Interaction: discord.Interaction, data: list[str]):
         self.chosenGame = data[0]  # type: ignore
 
@@ -73,7 +77,12 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
                     "style": discord.ButtonStyle.primary,
                     "emoji": "▶️",
                 },
-                {"label": "Cancel", "style": discord.ButtonStyle.danger, "emoji": "❎"},
+                {
+                    "label": "Cancel",
+                    "callback": self.game_cancel,
+                    "style": discord.ButtonStyle.danger,
+                    "emoji": "❎"
+                },
             ]
         )
 
