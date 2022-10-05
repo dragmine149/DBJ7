@@ -41,56 +41,73 @@ class GuessNumber(game_template.Template):
         await interaction.response.defer()
         self.confirmed = True
         if self.number == self.answer:
-            await self.interaction.edit_original_response(content=f"You won! You got the number right!\nPrize: {self.bet +(self.bet * self.mapped[self.range])}")
+            await self.interaction.edit_original_response(
+                content=f"You won! You got the number right!\nPrize: {self.bet +(self.bet * self.mapped[self.range])}"
+            )
             self.account.money += self.bet + (self.bet * self.mapped[self.range])
         elif self.number > self.answer:
-            await self.interaction.edit_original_response(content=f"Your answer was too low\nThe number was {self.number}\nPrize: -{self.bet +(self.bet * self.mapped[self.range])}")
+            await self.interaction.edit_original_response(
+                content=f"Your answer was too low\nThe number was {self.number}\nPrize: -{self.bet +(self.bet * self.mapped[self.range])}"
+            )
             self.account.money -= self.bet + (self.bet * self.mapped[self.range])
         elif self.number < self.answer:
-            await self.interaction.edit_original_response(content=f"Your answer was too high\nThe number was {self.number}\nPrize: -{self.bet +(self.bet * self.mapped[self.range])}")
+            await self.interaction.edit_original_response(
+                content=f"Your answer was too high\nThe number was {self.number}\nPrize: -{self.bet +(self.bet * self.mapped[self.range])}"
+            )
             self.account.money -= self.bet + (self.bet * self.mapped[self.range])
-        
+
     async def confirmation_no(self, interaction: discord.Interaction, label: str):
-        await interaction.response.send_message("Cancelled",ephemeral=True)
+        await interaction.response.send_message("Cancelled", ephemeral=True)
         self.confirmed = False
-    
-    async def start_game(self, range: int,interaction: discord.Interaction):
+
+    async def start_game(self, range: int, interaction: discord.Interaction):
         await interaction.response.defer()
-        self.mapped = {
-            10: 0.5,
-            25: 0.85,
-            50: 1,
-            200: 2
-        }
+        self.mapped = {10: 0.5, 25: 0.85, 50: 1, 200: 2}
         self.interaction = interaction
-        self.number = random.randint(1,range)
+        self.number = random.randint(1, range)
         self.guesses = 0
         self.account = await bank.Player_Status.get_by_id(self.interaction.user.id)
         if self.bet > self.account.money:
-            await self.interaction.edit_original_response(content="You don't have enough money to bet that much!")
+            await self.interaction.edit_original_response(
+                content="You don't have enough money to bet that much!"
+            )
             return
-        
-        await self.interaction.edit_original_response(content=f"Guess a number between 1 and {range} by type it in chat!",view=None)
+
+        await self.interaction.edit_original_response(
+            content=f"Guess a number between 1 and {range} by type it in chat!",
+            view=None,
+        )
         try:
             self.answer = int(
                 (
                     await self.bot.wait_for(
                         "message",
-                        check=lambda m: m.author == self.interaction.user and m.channel == self.interaction.channel
+                        check=lambda m: m.author == self.interaction.user
+                        and m.channel == self.interaction.channel,
                     )
                 ).content
             )
         except asyncio.TimeoutError:
-            return await self.interaction.response.send_message("You took too long to answer",ephemeral=True)
+            return await self.interaction.response.send_message(
+                "You took too long to answer", ephemeral=True
+            )
         except ValueError:
-            return await self.interaction.response.send_message("You didn't enter a number",ephemeral=True)
+            return await self.interaction.response.send_message(
+                "You didn't enter a number", ephemeral=True
+            )
         confirmation = uis.Multiple_Buttons()
-        confirmation.Add_Button("Yes",self.confirmation_yes,style=discord.ButtonStyle.primary)
-        confirmation.Add_Button("No",self.confirmation_no,style=discord.ButtonStyle.danger)
+        confirmation.Add_Button(
+            "Yes", self.confirmation_yes, style=discord.ButtonStyle.primary
+        )
+        confirmation.Add_Button(
+            "No", self.confirmation_no, style=discord.ButtonStyle.danger
+        )
         self.range = range
-        await self.interaction.edit_original_response(content=f"Are you sure you want to guess {self.answer}?",view=confirmation)
+        await self.interaction.edit_original_response(
+            content=f"Are you sure you want to guess {self.answer}?", view=confirmation
+        )
         await confirmation.wait()
-        
+
     async def actually_starting_the_game_with_rapid_pace_on_god(self):
         ui = uis.Multiple_Buttons()
         ui.Add_Button(
