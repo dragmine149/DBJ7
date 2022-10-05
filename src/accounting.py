@@ -135,8 +135,11 @@ class Accounting(commands.Cog):
     @commands.cooldown(1, 86400, commands.BucketType.user)
     async def borrow_money(self, ctx: commands.Context, amount: int = 1000):
         account = await bank.Player_Status.get_by_id(ctx.author.id)
-        interest = round(random.random(),2)
-        if (datetime.now() - (account.last_paid_debt if account.last_paid_debt else datetime.now())).days > 7:
+        interest = round(random.random(), 2)
+        if (
+            datetime.now()
+            - (account.last_paid_debt if account.last_paid_debt else datetime.now())
+        ).days > 7:
             return await ctx.reply(
                 embed=discord.Embed(
                     title="Borrow money",

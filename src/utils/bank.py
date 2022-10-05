@@ -1,8 +1,9 @@
 import dataclasses
 import logging
+import os
 import typing
 from datetime import datetime
-import os
+
 import discord
 from discord.ext import commands
 
@@ -46,7 +47,7 @@ class Player_Status:
     async def get_by_id(cls, user_id: int) -> "Player_Status":
         try:
             data = await FileHandler().ReadFile(f"{user_id}.json")
-        except (FileNotFoundError,json.JSONDecodeError):
+        except (FileNotFoundError, json.JSONDecodeError):
             return await cls.initialize_new_user(user_id)
         return cls(
             discord.utils.get(bot.users, id=user_id),
@@ -79,8 +80,11 @@ class Player_Status:
     @staticmethod
     async def get_users() -> typing.List[int]:
         return (int(x[:-5]) for x in os.listdir("Data/"))
+
     def __setattr__(self, __name: str, __value: typing.Any) -> None:
-        logger.info(f"Transaction triggered from {self.user} to {__name} with value of {__value}")
+        logger.info(
+            f"Transaction triggered from {self.user} to {__name} with value of {__value}"
+        )
         if __name == "money":
             if __value < 0:
                 raise ValueError("Money cannot be negative")
