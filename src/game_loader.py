@@ -41,6 +41,8 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         self.logger.info("initialized")
 
         self.chosenGame: str = ""
+        self.msg: discord.Message | None = None
+        self.confirmInteract: discord.Interaction
         bank.bot = bot
 
         # Startup loding of games
@@ -62,30 +64,41 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
 
                 return  # stops the loop and the function
 
-    async def game_cancel(self, Interaction: discord.Interaction, values: list[str]):
+    async def game_cancel(self, Interaction: discord.Interaction):
         await Interaction.response.send_message("Canceled playing...", ephemeral=True)
         # delete old messages?
 
+    async def game_premethod(self, Interaction: discord.Interaction, label: str):
+        await self.confirmInteract.delete_original_response()
+        if label == "Play game!":
+            return await self.game_select(Interaction, [""])
+        if label == "Cancel":
+            return await self.game_cancel(Interaction)
+        
+
     async def game_preLoad(self, Interaction: discord.Interaction, data: list[str]):
         self.chosenGame = data[0]  # type: ignore
+        if self.msg is not None:
+            await self.msg.delete()  # delete dropdown message
+            self.msg = None
 
         view = uis.Multiple_Buttons(
             [
                 {
                     "label": "Play game!",
-                    "callback": self.game_select,
+                    "callback": self.game_premethod,
                     "style": discord.ButtonStyle.primary,
                     "emoji": "▶️",
                 },
                 {
                     "label": "Cancel",
-                    "callback": self.game_cancel,
+                    "callback": self.game_premethod,
                     "style": discord.ButtonStyle.danger,
                     "emoji": "❎",
                 },
             ]
         )
-
+        self.confirmInteract = Interaction
         await Interaction.response.send_message(f"Play {self.chosenGame}?", view=view)
 
     async def process_gameInput(
@@ -100,7 +113,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         await ctx.send("Game not found in currently loaded games...")
         return False
 
-    @commands.hybrid_command()
+    @commands.hybrid_command(aliases=["play"])
     async def playgame(self, ctx: commands.Context, game: typing.Optional[str]):
         """
         Choose a game to gamble coins on!
