@@ -25,6 +25,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         self.logger = logging.getLogger("bot.game")
         self.logger.info("initialized")
         self.chosenGame: str = ""
+        bank.bot = bot
 
         for game in os.listdir("src/games"):
             if game.endswith(".py"):

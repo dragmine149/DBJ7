@@ -33,6 +33,7 @@ class FlipCoin:
             bot (commands.cog): _description_
         """
         self.bot = bot
+        bank.bot = bot
 
     @property
     def display_emoji(self) -> str:
