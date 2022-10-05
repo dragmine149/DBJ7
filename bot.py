@@ -14,7 +14,7 @@ import os
 import signal
 import subprocess
 import traceback
-
+from src.game_loader import game_loader
 # File check
 try:
     os.mkdir("logs")
@@ -62,8 +62,20 @@ class FileHandler(FileSystemEventHandler):
                     log.error(e)
                     log.error(traceback.format_exc())
 
+class GameHandler(FileSystemEventHandler):
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
+    def on_modified(self, event):
+        if not event.is_directory:  # checks for file modified instead of file creation
+            self.log.info(f"Game source code changed: {event.src_path}")
+            if event.src_path.endswith(".py") and not event.src_path.startswith("_"):
+                self.log.info("Reloading...")
+                reload = os.path.basename(event.src_path)[:-3]
+                cog: game_loader = self.bot.get_cog('Games')
+                log.info("Reload status "+cog.reload_game(reload))
 
 observer.schedule(FileHandler(), "src", recursive=False)
+observer.schedule(GameHandler(), "src/games", recursive=False)
 
 
 def get_git_revision_short_hash() -> str:
