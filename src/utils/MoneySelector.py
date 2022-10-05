@@ -107,6 +107,7 @@ class MoneySelector:
     async def changeValue(self, Interaction: discord.Interaction, label: str):
         money = int(label[1:])
         account = await bank.Player_Status.get_by_id(Interaction.user.id)
+        
         if label[0] == "+":
             if account.money < self.value + money:
                 return await Interaction.response.send_message(
@@ -115,7 +116,10 @@ class MoneySelector:
                 )
             self.value += money
         if label[0] == "-":
-            self.value -= money
+            if self.value - money < 0:
+                await Interaction.response.send_message(
+                    "You can't bid negative money!",ephemeral=True
+                )
 
         await Interaction.response.send_message(
             content=f"Changed ammount betting by: {money}", ephemeral=True

@@ -86,8 +86,6 @@ class Player_Status:
             f"Transaction triggered from {self.user} to {__name} with value of {__value}"
         )
         if __name == "money":
-            if not isinstance(__value, int) or not isinstance(__value, float):
-                raise TypeError("Money must be an integer or float")
             if __value < 0:
                 raise ValueError("Money cannot be negative")
             bot.loop.create_task(
@@ -105,8 +103,6 @@ class Player_Status:
                 )
             )
         elif __name == "debt":
-            if not isinstance(__value, int) or not isinstance(__value, float):
-                raise TypeError("Debt must be an integer or float")
             if __value < 0:
                 raise ValueError("Debt cannot be negative")
             bot.loop.create_task(
@@ -124,8 +120,6 @@ class Player_Status:
                 )
             )
         elif __name == "unlucky":
-            if not isinstance(__value, int) or not isinstance(__value, float):
-                raise TypeError("Unlucky must be an integer or float")
             if __value < 0:
                 raise ValueError("Unlucky cannot be negative")
             if __value > 1:
@@ -145,8 +139,6 @@ class Player_Status:
                 )
             )
         elif __name == "last_paid_debt":
-            if not isinstance(__value, datetime):
-                raise TypeError("Last paid debt must be a datetime object")
             bot.loop.create_task(
                 FileHandler().SaveFile(
                     f"{self.user.id}.json",

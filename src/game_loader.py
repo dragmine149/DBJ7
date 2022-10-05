@@ -96,7 +96,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             return
         if (
             self.account.last_paid_debt
-            and (datetime.now() - self.account.last_paid_debt).days < 7
+            and (datetime.now() - self.account.last_paid_debt).days > 7
         ):
             return await ctx.reply(
                 "You're prohibited to play any games since you have debts and you didn't paid any for a week straight. Go pay your debt to play the game!"
@@ -170,7 +170,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
                     self.logger.info(f"Added {game} into game_loader on the fly!")
 
     ## TODO: Find a way to have an alaises so we can run {prefix}rg instead
-    @commands.hybrid_command(hidden=True)
+    @commands.hybrid_command(hidden=True, aliases=["rg"])
     @commands.is_owner()
     async def reloadgames(self, ctx: commands.Context):
         # Seperate reload command as it reloads different modules than the bot would reload
