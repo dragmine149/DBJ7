@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional, Union
 
 import discord
 from discord import app_commands
-from discord.ext import commands, menus
+from discord.ext import commands, menus 
 
 from .utils import time
 from .utils.paginator import Pages

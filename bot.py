@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 from watchdog.events import FileSystemEventHandler
-from watchdog.observers import Observer
+from watchdog.observers.polling import PollingObserver
 
 from config import config
 
@@ -44,7 +44,7 @@ logging.getLogger("discord").setLevel(logging.WARNING)  # mute
 bot = commands.Bot(command_prefix=config.prefix, intents=discord.Intents.all())
 bot.log = log
 
-observer = Observer()
+observer = PollingObserver()
 
 
 class FileHandler(FileSystemEventHandler):
