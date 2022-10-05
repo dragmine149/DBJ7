@@ -97,17 +97,16 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
                 },
             ]
         )
-        
+
         # Checks the message and makes sure we have a message
         msg = None
         if Interaction.message is None:
             raise ValueError("Interaction.message is None")
-        
+
         if type(Interaction.channel) is not discord.TextChannel:
             raise ValueError("Command called not in a text channel!")
 
-        msg = await Interaction.channel.send(
-            f"Play {self.chosenGame}?", view=view)
+        msg = await Interaction.channel.send(f"Play {self.chosenGame}?", view=view)
 
         self.confirmInteract = msg
 
