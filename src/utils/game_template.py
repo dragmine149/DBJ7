@@ -1,7 +1,6 @@
+import bank
 import discord
 from discord.ext import commands
-
-import bank
 
 
 class Template:
