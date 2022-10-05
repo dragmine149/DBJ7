@@ -81,7 +81,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
                     "label": "Cancel",
                     "callback": self.game_cancel,
                     "style": discord.ButtonStyle.danger,
-                    "emoji": "❎"
+                    "emoji": "❎",
                 },
             ]
         )
