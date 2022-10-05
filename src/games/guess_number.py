@@ -53,7 +53,6 @@ class GuessNumber(game_template.Template):
     async def confirmation_no(self, interaction: discord.Interaction, label: str):
         await interaction.response.send_message("Cancelled",ephemeral=True)
         self.confirmed = False
-<<<<<<< HEAD
     
     async def start_game(self, range: int,interaction: discord.Interaction):
         await interaction.response.defer()
@@ -92,62 +91,6 @@ class GuessNumber(game_template.Template):
         await self.interaction.edit_original_response(content=f"Are you sure you want to guess {self.answer}?",view=confirmation)
         await confirmation.wait()
         
-=======
-
-    async def start_game(self, range: int, interaction: discord.Interaction):
-        mapped = {10: 0.5, 25: 0.85, 50: 1, 200: 2}
-        self.interaction = interaction
-        number = random.randint(1, range)
-        self.guesses = 0
-        self.account = await bank.Player_Status.get_by_id(self.interaction.user.id)
-        if self.bet > self.account.money:
-            await self.interaction.response.send_message(
-                "You don't have enough money to bet that much!", ephemeral=True
-            )
-            return
-
-        await self.interaction.edit_original_response(
-            content=f"Guess a number between 1 and {range}"
-        )
-        modal = uis.AskNumber_Modal(title="Provide answer here")
-        await self.interaction.response.send_modal(modal=modal)
-        await modal.wait()
-        if modal.answer is None:
-            return await self.interaction.followup.send(
-                "You didn't provide an answer", ephemeral=True
-            )
-        confirmation = uis.Multiple_Buttons()
-        confirmation.Add_Button(
-            "Yes", self.confirmation_yes, style=discord.ButtonStyle.primary
-        )
-        confirmation.Add_Button(
-            "No", self.confirmation_no, style=discord.ButtonStyle.danger
-        )
-        await self.interaction.response.send_message(
-            f"Are you sure you want to guess {modal.answer}?", view=confirmation
-        )
-        await confirmation.wait()
-        await asyncio.sleep(1)
-        if not self.confirmed:
-            return await self.interaction.edit_original_response(content="Cancelled")
-        answer = modal.answer.value
-        if number == answer:
-            await self.interaction.edit_original_message(
-                content=f"You won! You got the number right!\nPrize: {self.bet * mapped[range]}"
-            )
-            self.account.money += self.bet * mapped[range]
-        elif number > answer:
-            await self.interaction.edit_original_message(
-                content=f"Your answer was too low\nThe number was {number}\nPrize: -{self.bet * mapped[range]}"
-            )
-            self.account.money -= self.bet * mapped[range]
-        elif number < answer:
-            await self.interaction.edit_original_message(
-                content=f"Your answer was too high\nThe number was {number}\nPrize: -{self.bet * mapped[range]}"
-            )
-            self.account.money -= self.bet * mapped[range]
-
->>>>>>> 449429b839eea6d484bf99b02cbdcc928eaa894c
     async def actually_starting_the_game_with_rapid_pace_on_god(self):
         ui = uis.Multiple_Buttons()
         ui.Add_Button(
