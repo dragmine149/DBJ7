@@ -3,7 +3,7 @@ from discord.ext import commands
 
 class gameTest:
     """
-    Overall view and testing for some things
+    Run some tests for some functionalities.
     """
 
     def __init__(self, bot: commands.bot) -> None:

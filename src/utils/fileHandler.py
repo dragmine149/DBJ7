@@ -1,7 +1,7 @@
 try:
     import orjson as json  # speed
 except ImportError:
-    import json
+    import json  # type: ignore
 
 import os
 
@@ -12,7 +12,7 @@ class FileHandler:
     def __init__(self) -> None:
         pass
 
-    async def SaveFile(self, name: str, data: dict) -> None:
+    async def SaveFile(self, name: str, data) -> None:
         """Saves a file
 
         Args:

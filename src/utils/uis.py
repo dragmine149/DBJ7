@@ -3,7 +3,6 @@ import typing
 
 import discord
 from discord import ui
-
 logger = logging.getLogger("bot.ui.log")
 logger.info("initialized")
 
@@ -49,6 +48,12 @@ class Multiple_Buttons(ui.View):
     """
     Shows multiple buttons on the message
     """
+    
+    def __init__(self, data=[]):
+        super().__init__()
+        
+        for buttonData in data:
+            self.Add_Button(**buttonData)
 
     components: typing.List[Button] = []
 
@@ -63,8 +68,10 @@ class Multiple_Buttons(ui.View):
             emoji (typing.Optional[typing.Union[str, Emoji, PartialEmoji]], optional): Emoji to show on the button. Defaults to None.
             row (typing.Optional[int], optional): What row to put the button on. Defaults to None (automatic).
         """
-        self.add_item(Button(label, callback, **kwargs))
-        self.components.append(Button(label, callback, **kwargs))
+        obj = Button(label, callback, **kwargs)
+        
+        self.add_item(obj)
+        self.components.append(obj)
 
     @property
     def choosen(self) -> "Button":

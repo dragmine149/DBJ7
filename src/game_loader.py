@@ -2,11 +2,13 @@ import importlib
 import logging
 import os
 import typing
+import traceback
 
 import discord
 from discord.ext import commands
 
 from .utils import uis
+from .utils import bank
 
 # from .utils.paginator import Pages
 
@@ -18,10 +20,11 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
 
     def __init__(self, bot: commands.bot) -> None:
         self.bot = bot
-        self.game_module = []
-        self.games = []
+        self.game_module: typing.List = []
+        self.games: typing.List = []
         self.logger = logging.getLogger("bot.game")
         self.logger.info("initialized")
+        self.chosenGame: str = ""
 
         for game in os.listdir("src/games"):
             if game.endswith(".py"):
@@ -30,41 +33,79 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
                 # Also means, we should be able to create new files without having to reload the bot
 
                 module = importlib.import_module(f"src.games.{game[:-3]}")
-                self.game_module.append(module)
-                self.games.append(module.game_setup(self.bot))
-                self.logger.info(f"Loaded {game} into game_loader")
-
+                self.load_modules(module, game)
+    
+    def load_modules(self, module, name):
+        self.game_module.append(module)
+        self.games.append(module.game_setup(self.bot))
+        self.logger.info(f"Loaded {name} into game_loader")
+    
     @property
     def display_emoji(self) -> typing.Union[str, bytes, discord.PartialEmoji]:
         return "🎮"
 
     async def game_select(self, Interaction: discord.Interaction, values: list[str]):
         for game in self.games:
-            if type(game).__name__ == values[0]:
+            if type(game).__name__ == self.chosenGame:
                 try:
                     # await self.msg.delete()  # Don't know whever to delete original message or not
                     await game.start(Interaction)
-                except AttributeError:
+                except AttributeError as e:
                     # Add error checking for none complete games
-                    await Interaction.response.send_message(
-                        "Failed to start game! (game code not coded correctly)"
+                    cnt = "ERROR: Failed to start game! (game code not coded correctly)"
+                    
+                    await Interaction.followup.send(
+                        content=cnt
                     )
                     self.logger.error(
-                        f"Failed to start {values[0]}! Missing start function"
+                        f"Failed to start {self.chosenGame}!"
                     )
+                    self.logger.info(e)
+                    self.logger.info(traceback.format_exc())
                 break  # Don't both looping through the other games
+    
+    async def game_preLoad(self, Interaction: discord.Interaction, data: list[str]):
+        self.chosenGame = data[0]  # type: ignore
+        
+        button = uis.Button(label="Play game!", callback=self.game_select,
+                            style=discord.ButtonStyle.primary, emoji="▶️")
+
+        view = discord.ui.View()
+        view.add_item(button)
+
+        await Interaction.response.send_message("Press the button once you are ready!", view=view)
+
 
     @commands.hybrid_command()
-    async def playgame(self, ctx: commands.Context):
+    async def playgame(self, ctx: commands.Context, game: typing.Optional[str]):
+        """
+        Choose a game to gamble coins on!
+        
+        Args:
+            game (option, str): Tries and loads you straight into that game
+        """
+        self.account = await bank.Player_Status.get_by_id(ctx.author.id)
+        
         """Select a game to play"""
-        unlucky = 0  # set to user status
-        if unlucky == 1:
+        if self.account.unlucky == 1:
             await ctx.send(
                 "Oh oh! Seems likes you can't win any games. Come back in a while, you might be more lucky then."
             )
             return
 
         gameOptions = []
+        
+        if game is not None and game != "":
+            found = False
+            for possibleGames in self.games:
+                if type(possibleGames).__name__ == game:
+                    self.chosenGame = game  # type: ignore
+                    found = True
+                    await self.game_preLoad(ctx.interaction, [str(game)])
+                    return
+            
+            if not found:
+                await ctx.send("Game not found in currently loaded games...")
 
         # Load games into the dropdown.
         for game in self.games:
@@ -78,7 +119,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             )
 
         view = uis.DropdownView(
-            callback=self.game_select,
+            callback=self.game_preLoad,
             placeholder="Select game to play",
             options=gameOptions,
         )
