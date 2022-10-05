@@ -23,7 +23,7 @@ class Accounting(commands.Cog):
         for member in self.bot.get_all_members():
             await bank.Player_Status.initialize_new_user(
                 member.id
-            ) if not member.bot else None
+            ) if not member.bot and not member.id in await bank.Player_Status.get_users() else None
 
     @property
     def display_emoji(self) -> typing.Union[str, bytes, discord.PartialEmoji]:
@@ -39,6 +39,7 @@ class Accounting(commands.Cog):
 
     @account.command()
     async def info(self, ctx: commands.Context, member: discord.User = None):
+        member = member if member else ctx.author
         if member.bot:
             return await ctx.reply(
                 embed=discord.Embed(title="No.", color=discord.Color.red())
@@ -79,7 +80,7 @@ class Accounting(commands.Cog):
             await ctx.reply(
                 embed=discord.Embed(
                     title="Daily prize!",
-                    description=f"You can get daily prize in {timedelta(seconds=error.cooldown)}!",
+                    description=f"You can get daily prize in {timedelta(seconds=error.cooldown.get_retry_after())}!",
                 )
             )
         else:
@@ -124,7 +125,7 @@ class Accounting(commands.Cog):
             await ctx.reply(
                 embed=discord.Embed(
                     title="Pay debt",
-                    description=f"You can pay debt in {timedelta(seconds=error.cooldown)}!",
+                    description=f"You can pay debt in {timedelta(seconds=error.cooldown.get_retry_after())}!",
                 )
             )
         else:
@@ -134,8 +135,8 @@ class Accounting(commands.Cog):
     @commands.cooldown(1, 86400, commands.BucketType.user)
     async def borrow_money(self, ctx: commands.Context, amount: int = 1000):
         account = await bank.Player_Status.get_by_id(ctx.author.id)
-        interest = random.random()
-        if (datetime.now() - account.last_paid_debt).days > 7:
+        interest = round(random.random(),2)
+        if (datetime.now() - (account.last_paid_debt if account.last_paid_debt else datetime.now())).days > 7:
             return await ctx.reply(
                 embed=discord.Embed(
                     title="Borrow money",
@@ -144,6 +145,8 @@ class Accounting(commands.Cog):
                 )
             )
         account.debt += amount + (amount * interest)
+        account.last_paid_debt = datetime.now()
+        account.money += amount
 
         await ctx.reply(
             embed=discord.Embed(
@@ -159,7 +162,7 @@ class Accounting(commands.Cog):
             await ctx.reply(
                 embed=discord.Embed(
                     title="Borrow money",
-                    description="You can borrow money 1 time per day!",
+                    description=f"You can borrow money 1 time per day! Please wait for another {timedelta(seconds=error.cooldown.get_retry_after())}",
                 )
             )
         else:

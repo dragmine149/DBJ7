@@ -28,7 +28,7 @@ Callback Function
 import discord
 
 from src.utils import uis
-
+from ..utils import bank
 
 class MoneySelector:
     def __init__(self, Interaction: discord.Interaction, callback=None) -> None:
@@ -104,7 +104,12 @@ class MoneySelector:
 
     async def changeValue(self, Interaction: discord.Interaction, label: str):
         money = int(label[1:])
+        account = await bank.Player_Status.get_by_id(Interaction.user.id)
         if label[0] == "+":
+            if account.money < self.value + money:
+                return await Interaction.response.send_message(
+                    f"That bid was higher than your money that your currently have! Go get some money if you want to bid higher!\nMoney that you currently having: {account.money}\nAmount of money you going to bid: {self.value + money}",ephemeral=True
+                )
             self.value += money
         if label[0] == "-":
             self.value -= money

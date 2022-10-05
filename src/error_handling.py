@@ -104,6 +104,8 @@ class Error_Handling(commands.Cog):
                     color=discord.Color.red(),
                 )
             )
+        elif isinstance(error, commands.CommandOnCooldown):
+            pass
         else:
             await ctx.send(
                 embed=(
