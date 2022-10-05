@@ -8,7 +8,7 @@ from datetime import datetime
 import discord
 from discord.ext import commands
 
-from .utils import bank, uis
+from .utils import bank, uis  # type: ignore
 
 # from .utils.paginator import Pages
 
@@ -180,5 +180,5 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         await ctx.reply("Reloaded games", ephemeral=True)
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(game_loader(bot))

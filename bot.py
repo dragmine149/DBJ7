@@ -49,17 +49,18 @@ observer = PollingObserver()
 
 class FileHandler(FileSystemEventHandler):
     def on_modified(self, event):
-        log.info(f"File changed: {event.src_path}")
-        if event.src_path.endswith(".py"):
-            log.info("Reloading...")
-            path = event.src_path.replace("\\", "/").replace("/", ".")[:-3]
-            try:
-                asyncio.run(bot.reload_extension(path))
-                log.info(f"Reloaded {path}")
-            except Exception as e:
-                log.error(f"Failed to reload {path}")
-                log.error(e)
-                log.error(traceback.format_exc())
+        if not event.is_directory:  # checks for file modified instead of file creation
+            log.info(f"File changed: {event.src_path}")
+            if event.src_path.endswith(".py"):
+                log.info("Reloading...")
+                path = event.src_path.replace("\\", "/").replace("/", ".")[:-3]
+                try:
+                    asyncio.run(bot.reload_extension(path))
+                    log.info(f"Reloaded {path}")
+                except Exception as e:
+                    log.error(f"Failed to reload {path}")
+                    log.error(e)
+                    log.error(traceback.format_exc())
 
 
 observer.schedule(FileHandler(), "src", recursive=False)
