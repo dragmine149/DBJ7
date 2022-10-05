@@ -4,6 +4,7 @@ import os
 import traceback
 import typing
 from datetime import datetime
+
 import discord
 from discord.ext import commands
 
@@ -92,8 +93,13 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
                 "Oh oh! Seems likes you can't win any games. Come back in a while, you might be more lucky then."
             )
             return
-        if self.account.last_paid_debt and (datetime.now() - self.account.last_paid_debt).days < 7:
-            return await ctx.reply("You're prohibited to play any games since you have debts and you didn't paid any for a week straight. Go pay your debt to play the game!")
+        if (
+            self.account.last_paid_debt
+            and (datetime.now() - self.account.last_paid_debt).days < 7
+        ):
+            return await ctx.reply(
+                "You're prohibited to play any games since you have debts and you didn't paid any for a week straight. Go pay your debt to play the game!"
+            )
 
         gameOptions = []
 
