@@ -1,6 +1,7 @@
-from ..utils import bank
 import discord
 from discord.ext import commands
+
+from ..utils import bank
 
 
 class Template:
