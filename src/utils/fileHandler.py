@@ -42,7 +42,7 @@ class FileHandler:
             raise FileNotFoundError(
                 "User has no data yet (change this error: `src/utils/fileHandler: 39`)"
             )
-        async with aiofiles.open(f"Data/{name}", "r") as f:
+        async with aiofiles.open(f"Data/{name}", "rb") as f: # orjson moment
             return json.loads(await f.read())  # type: ignore
 
 
