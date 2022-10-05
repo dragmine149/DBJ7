@@ -42,7 +42,6 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
 
         self.chosenGame: str = ""
         self.msg: discord.Message | None = None
-        self.confirmInteract: discord.Interaction
         bank.bot = bot
 
         # Startup loding of games
@@ -69,7 +68,8 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         # delete old messages?
 
     async def game_premethod(self, Interaction: discord.Interaction, label: str):
-        await self.confirmInteract.delete_original_response()
+        await self.confirmInteract.delete()  # delete old stuff
+
         if label == "Play game!":
             return await self.game_select(Interaction, [""])
         if label == "Cancel":
@@ -97,8 +97,19 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
                 },
             ]
         )
-        self.confirmInteract = Interaction
-        await Interaction.response.send_message(f"Play {self.chosenGame}?", view=view)
+        
+        # Checks the message and makes sure we have a message
+        msg = None
+        if Interaction.message is None:
+            raise ValueError("Interaction.message is None")
+        
+        if type(Interaction.channel) is not discord.TextChannel:
+            raise ValueError("Command called not in a text channel!")
+
+        msg = await Interaction.channel.send(
+            f"Play {self.chosenGame}?", view=view)
+
+        self.confirmInteract = msg
 
     async def process_gameInput(
         self, ctx: commands.Context, game: typing.Optional[str]
@@ -106,7 +117,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         for possibleGames in self.games:
             if type(possibleGames).__name__ == game:
                 self.chosenGame = game  # type: ignore
-                await self.game_preLoad(ctx.interaction, [str(game)])
+                await self.game_preLoad(ctx, [str(game)])
                 return True
 
         await ctx.send("Game not found in currently loaded games...")
