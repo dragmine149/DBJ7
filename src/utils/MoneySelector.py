@@ -27,9 +27,7 @@ Callback Function
 
 import discord
 
-from src.utils import uis
-
-from src.utils import bank
+from src.utils import bank, uis
 
 
 class MoneySelector:

@@ -6,10 +6,8 @@ import aenum
 import discord
 from discord.ext import commands
 
-from src.utils import bank, uis
+from src.utils import bank, game_template, uis
 from src.utils.MoneySelector import MoneySelector
-
-from src.utils import game_template
 
 logger = logging.getLogger("games.flip_coin.log")
 logger.info("Initalised")
