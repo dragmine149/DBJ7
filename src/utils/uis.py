@@ -125,8 +125,11 @@ class DropdownView(ui.View):
         """If you want to add a new dropdown menu in the ui you can. Just not recommened."""
         self.add_item(Dropdown(callback, **kwargs))
 
+
 class AskNumber_Modal(ui.Modal):
     answer = ui.TextInput(label="Please provide answer here")
-    
+
     async def on_submit(self, interaction: discord.Interaction, /) -> None:
-        await interaction.response.send_message(f"Answer: {self.answer}",ephemeral=True)
+        await interaction.response.send_message(
+            f"Answer: {self.answer}", ephemeral=True
+        )
