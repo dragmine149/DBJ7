@@ -29,7 +29,7 @@ import discord
 
 from src.utils import uis
 
-from ..utils import bank
+from src.utils import bank
 
 
 class MoneySelector:
