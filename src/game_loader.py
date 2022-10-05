@@ -74,7 +74,6 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             return await self.game_select(Interaction, [""])
         if label == "Cancel":
             return await self.game_cancel(Interaction)
-        
 
     async def game_preLoad(self, Interaction: discord.Interaction, data: list[str]):
         self.chosenGame = data[0]  # type: ignore
