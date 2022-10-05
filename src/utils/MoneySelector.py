@@ -25,7 +25,6 @@ Callback Function
 --- This is the value of the amount selected
 """
 
-from click import style
 import discord
 
 from src.utils import uis
@@ -46,54 +45,56 @@ class MoneySelector:
 
         self.value = 0
 
-        self.view = uis.Multiple_Buttons([
-            {
-                "label": "+100",
-                "callback": self.changeValue,
-                "style": discord.ButtonStyle.primary,
-                "emoji": "💵"
-            },
-            {
-                "label": "+10",
-                "callback": self.changeValue,
-                "style": discord.ButtonStyle.primary,
-                "emoji": "💵"
-            },
-            {
-                "label": "+1",
-                "callback": self.changeValue,
-                "style": discord.ButtonStyle.primary,
-                "emoji": "💵"
-            },
-            {
-                "label": "-100",
-                "callback": self.changeValue,
-                "style": discord.ButtonStyle.danger,
-                "emoji": "💴",
-                "row": 1
-            },
-            {
-                "label": "-10",
-                "callback": self.changeValue,
-                "style": discord.ButtonStyle.danger,
-                "emoji": "💴",
-                "row": 1
-            },
-            {
-                "label": "-1",
-                "callback": self.changeValue,
-                "style": discord.ButtonStyle.danger,
-                "emoji": "💴",
-                "row": 1
-            },
-            {
-                "label": "Confirm",
-                "callback": self.FinishedCallback,
-                "style": discord.ButtonStyle.success,
-                "emoji": "✅",
-                "row": 2
-            }
-        ])
+        self.view = uis.Multiple_Buttons(
+            [
+                {
+                    "label": "+100",
+                    "callback": self.changeValue,
+                    "style": discord.ButtonStyle.primary,
+                    "emoji": "💵",
+                },
+                {
+                    "label": "+10",
+                    "callback": self.changeValue,
+                    "style": discord.ButtonStyle.primary,
+                    "emoji": "💵",
+                },
+                {
+                    "label": "+1",
+                    "callback": self.changeValue,
+                    "style": discord.ButtonStyle.primary,
+                    "emoji": "💵",
+                },
+                {
+                    "label": "-100",
+                    "callback": self.changeValue,
+                    "style": discord.ButtonStyle.danger,
+                    "emoji": "💴",
+                    "row": 1,
+                },
+                {
+                    "label": "-10",
+                    "callback": self.changeValue,
+                    "style": discord.ButtonStyle.danger,
+                    "emoji": "💴",
+                    "row": 1,
+                },
+                {
+                    "label": "-1",
+                    "callback": self.changeValue,
+                    "style": discord.ButtonStyle.danger,
+                    "emoji": "💴",
+                    "row": 1,
+                },
+                {
+                    "label": "Confirm",
+                    "callback": self.FinishedCallback,
+                    "style": discord.ButtonStyle.success,
+                    "emoji": "✅",
+                    "row": 2,
+                },
+            ]
+        )
 
     async def defaultCallBack(self, value):
         await self.Interaction.edit_original_response(f"You choice {value}")

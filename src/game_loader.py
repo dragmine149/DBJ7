@@ -1,14 +1,13 @@
 import importlib
 import logging
 import os
-import typing
 import traceback
+import typing
 
 import discord
 from discord.ext import commands
 
-from .utils import uis
-from .utils import bank
+from .utils import bank, uis
 
 # from .utils.paginator import Pages
 
@@ -34,12 +33,12 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
 
                 module = importlib.import_module(f"src.games.{game[:-3]}")
                 self.load_modules(module, game)
-    
+
     def load_modules(self, module, name):
         self.game_module.append(module)
         self.games.append(module.game_setup(self.bot))
         self.logger.info(f"Loaded {name} into game_loader")
-    
+
     @property
     def display_emoji(self) -> typing.Union[str, bytes, discord.PartialEmoji]:
         return "🎮"
@@ -53,39 +52,40 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
                 except AttributeError as e:
                     # Add error checking for none complete games
                     cnt = "ERROR: Failed to start game! (game code not coded correctly)"
-                    
-                    await Interaction.followup.send(
-                        content=cnt
-                    )
-                    self.logger.error(
-                        f"Failed to start {self.chosenGame}!"
-                    )
+
+                    await Interaction.followup.send(content=cnt)
+                    self.logger.error(f"Failed to start {self.chosenGame}!")
                     self.logger.info(e)
                     self.logger.info(traceback.format_exc())
                 break  # Don't both looping through the other games
-    
+
     async def game_preLoad(self, Interaction: discord.Interaction, data: list[str]):
         self.chosenGame = data[0]  # type: ignore
-        
-        button = uis.Button(label="Play game!", callback=self.game_select,
-                            style=discord.ButtonStyle.primary, emoji="▶️")
+
+        button = uis.Button(
+            label="Play game!",
+            callback=self.game_select,
+            style=discord.ButtonStyle.primary,
+            emoji="▶️",
+        )
 
         view = discord.ui.View()
         view.add_item(button)
 
-        await Interaction.response.send_message("Press the button once you are ready!", view=view)
-
+        await Interaction.response.send_message(
+            "Press the button once you are ready!", view=view
+        )
 
     @commands.hybrid_command()
     async def playgame(self, ctx: commands.Context, game: typing.Optional[str]):
         """
         Choose a game to gamble coins on!
-        
+
         Args:
             game (option, str): Tries and loads you straight into that game
         """
         self.account = await bank.Player_Status.get_by_id(ctx.author.id)
-        
+
         """Select a game to play"""
         if self.account.unlucky == 1:
             await ctx.send(
@@ -94,7 +94,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             return
 
         gameOptions = []
-        
+
         if game is not None and game != "":
             found = False
             for possibleGames in self.games:
@@ -103,7 +103,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
                     found = True
                     await self.game_preLoad(ctx.interaction, [str(game)])
                     return
-            
+
             if not found:
                 await ctx.send("Game not found in currently loaded games...")
 
