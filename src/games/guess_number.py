@@ -4,7 +4,7 @@ import random
 import discord
 from discord.ext import commands
 
-from ..utils import MoneySelector, bank, game_template, uis
+from src.utils import MoneySelector, bank, game_template, uis
 
 
 class GuessNumber(game_template.Template):
