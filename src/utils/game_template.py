@@ -2,7 +2,6 @@ from src.utils import bank
 import discord
 from discord.ext import commands
 
-
 class Template:
     """
     A game template
