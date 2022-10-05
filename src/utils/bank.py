@@ -60,7 +60,7 @@ class Player_Status:
         )
 
     @classmethod
-    async def initialize_new_user(cls, user_id: int):
+    async def initialize_new_user(cls, user_id: int) -> "Player_Status":
         data = {
             "money": 20000,
             "debt": 0,
@@ -86,6 +86,8 @@ class Player_Status:
             f"Transaction triggered from {self.user} to {__name} with value of {__value}"
         )
         if __name == "money":
+            if not isinstance(__value, int) or not isinstance(__value, float):
+                raise TypeError("Money must be an integer or float")
             if __value < 0:
                 raise ValueError("Money cannot be negative")
             bot.loop.create_task(
@@ -103,6 +105,8 @@ class Player_Status:
                 )
             )
         elif __name == "debt":
+            if not isinstance(__value, int) or not isinstance(__value, float):
+                raise TypeError("Debt must be an integer or float")
             if __value < 0:
                 raise ValueError("Debt cannot be negative")
             bot.loop.create_task(
@@ -120,8 +124,12 @@ class Player_Status:
                 )
             )
         elif __name == "unlucky":
+            if not isinstance(__value, int) or not isinstance(__value, float):
+                raise TypeError("Unlucky must be an integer or float")
             if __value < 0:
                 raise ValueError("Unlucky cannot be negative")
+            if __value > 1:
+                raise ValueError("Unlucky can't be over than 1")
             bot.loop.create_task(
                 FileHandler().SaveFile(
                     f"{self.user.id}.json",
@@ -137,6 +145,8 @@ class Player_Status:
                 )
             )
         elif __name == "last_paid_debt":
+            if not isinstance(__value, datetime):
+                raise TypeError("Last paid debt must be a datetime object")
             bot.loop.create_task(
                 FileHandler().SaveFile(
                     f"{self.user.id}.json",

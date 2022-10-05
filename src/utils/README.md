@@ -24,7 +24,7 @@ print(account.unlucky)
 print(account.last_paid_debt)
 
 account.money -= 69 # saved to file automatically
-account.last_paid_debt = datetime.now()
+account.last_paid_debt = datetime.now() # only accepts datetime object
 account.unlucky += 0.2 # unlucky is in form of 0-1 decimal point
 
 new_account = await bank.Player_Status.intialize_new_user(user.id) # fresh new account reset everything
