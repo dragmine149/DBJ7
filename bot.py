@@ -48,7 +48,6 @@ observer = PollingObserver()
 
 cog_log = logging.getLogger("bot.cog.reloader")
 
-
 class FileHandler(FileSystemEventHandler):
     def on_modified(self, event):
         if not event.is_directory:  # checks for file modified instead of file creation
@@ -64,21 +63,7 @@ class FileHandler(FileSystemEventHandler):
                     cog_log.error(e)
                     cog_log.error(traceback.format_exc())
 
-
-game_log = logging.getLogger("bot.game.reloader")
-
-
-class GameHandler(FileSystemEventHandler):
-    def on_modified(self, event):
-        if not event.is_directory:  # checks for file modified instead of file creation
-            game_log.info(f"Game source code changed: {event.src_path}")
-            if event.src_path.endswith(".py") and not event.src_path.startswith("_"):
-                asyncio.run(bot.reload_extension("src.game_loader"))
-                game_log.info("Reloaded game loader")
-
-
 observer.schedule(FileHandler(), "src", recursive=False)
-observer.schedule(GameHandler(), "src/games", recursive=False)
 
 
 def get_git_revision_short_hash() -> str:
