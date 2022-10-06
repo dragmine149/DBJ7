@@ -1,4 +1,5 @@
 import typing
+
 import discord
 from discord.ext import commands
 
@@ -9,7 +10,7 @@ class Template:
     """
     A game template
     """
-    
+
     aliases: typing.List = []
     name: str = ""
 

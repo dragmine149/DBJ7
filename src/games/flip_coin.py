@@ -6,9 +6,8 @@ import discord
 from discord.ext import commands
 
 from src.utils import bank, game_template, uis
-from src.utils.MoneySelector import MoneySelector
-
 from src.utils.enums import Coin_State
+from src.utils.MoneySelector import MoneySelector
 
 logger = logging.getLogger("games.flip_coin.log")
 logger.info("Initalized")

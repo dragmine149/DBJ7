@@ -7,12 +7,10 @@ from datetime import datetime
 
 import discord
 from discord.ext import commands
-
-from .utils import bank, uis  # type: ignore
-
-
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers.polling import PollingObserver
+
+from .utils import bank, uis  # type: ignore
 
 """
 game_loader
@@ -51,12 +49,15 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         observer = PollingObserver()
 
         def on_modified(event):
-            if not event.is_directory:  # checks for file modified instead of file creation
-               self.logger.info(
-                   f"Game source code changed: {event.src_path}")
-               if event.src_path.endswith(".py") and not event.src_path.startswith("_"):
-                   self.reload_game(os.path.split(event.src_path)[1][:-3])
-                   self.logger.info("Reloaded game loader")
+            if (
+                not event.is_directory
+            ):  # checks for file modified instead of file creation
+                self.logger.info(f"Game source code changed: {event.src_path}")
+                if event.src_path.endswith(".py") and not event.src_path.startswith(
+                    "_"
+                ):
+                    self.reload_game(os.path.split(event.src_path)[1][:-3])
+                    self.logger.info("Reloaded game loader")
 
         eH = FileSystemEventHandler()
         eH.on_modified = on_modified
@@ -132,7 +133,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         self, ctx: commands.Context, game: typing.Optional[str]
     ) -> bool:
         for possibleGames in self.games:
-            
+
             orGameName = type(possibleGames).__name__
             gameName = ""
             try:
@@ -140,7 +141,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             except AttributeError:
                 self.logger.warning(f"{gameName} has no attribute `name`")
                 gameName = orGameName
-            
+
             if gameName == game:
                 self.chosenGame = game  # type: ignore
                 await self.game_preLoad(ctx, [str(game)])
@@ -156,7 +157,8 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
 
             except AttributeError:
                 self.logger.warning(
-                    f"{orGameName} has no attribute `aliases` please refer to src.games.README.md for more information")
+                    f"{orGameName} has no attribute `aliases` please refer to src.games.README.md for more information"
+                )
 
         await ctx.send("Game not found in currently loaded games...")
         return False

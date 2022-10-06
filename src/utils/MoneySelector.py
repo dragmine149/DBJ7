@@ -124,14 +124,13 @@ class MoneySelector:
             ]
         )
 
-
     async def confirmCallback(self, Interaction: discord.Interaction, label: str):
         if Interaction.user.id != self.owner.id:
             return await Interaction.response.send_message(
                 "You are not allowed to confirm for the owner of this interaction",
-                ephemeral=True
+                ephemeral=True,
             )
-        
+
         if label == "yes":
             await self.betMsg.delete_original_response()
             return await self.callback(self.value)
@@ -172,7 +171,7 @@ class MoneySelector:
         if Interaction.user.id != self.owner.id:
             return await Interaction.response.send_message(
                 "You are not allowed to change the value of this interaction!",
-                ephemeral=True
+                ephemeral=True,
             )
         money = 0
         if label[1:] == "all":

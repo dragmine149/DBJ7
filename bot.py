@@ -48,6 +48,7 @@ observer = PollingObserver()
 
 cog_log = logging.getLogger("bot.cog.reloader")
 
+
 class FileHandler(FileSystemEventHandler):
     def on_modified(self, event):
         if not event.is_directory:  # checks for file modified instead of file creation
@@ -62,6 +63,7 @@ class FileHandler(FileSystemEventHandler):
                     cog_log.error(f"Failed to reload {path}")
                     cog_log.error(e)
                     cog_log.error(traceback.format_exc())
+
 
 observer.schedule(FileHandler(), "src", recursive=False)
 
