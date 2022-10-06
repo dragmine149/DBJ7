@@ -25,6 +25,7 @@ Callback Function
 --- This is the value of the amount selected
 """
 
+
 import discord
 
 from src.utils import bank, uis
@@ -96,11 +97,42 @@ class MoneySelector:
             ]
         )
 
+    async def confirmCallback(self, Interaction: discord.Interaction, label: str):
+        if label == "yes":
+            await self.betMsg.delete_original_response()
+            return await self.callback(self.value)
+
+        await Interaction.response.send_message(
+            content="Please enter new amount of money", ephemeral=True
+        )
+        await self.betMsg.delete_original_response()
+        return await self.get_money()
+
     async def defaultCallBack(self, value):
         await self.Interaction.edit_original_response(f"You choice {value}")
 
     async def FinishedCallback(self, Interaction: discord.Interaction, label: str):
-        await self.callback(self.value)
+        view = uis.Multiple_Buttons(
+            [
+                {
+                    "label": "yes",
+                    "callback": self.confirmCallback,
+                    "style": discord.ButtonStyle.success,
+                    "emoji": "✅",
+                },
+                {
+                    "label": "no",
+                    "callback": self.confirmCallback,
+                    "style": discord.ButtonStyle.danger,
+                    "emoji": "❎",
+                },
+            ]
+        )
+
+        self.betMsg = Interaction
+        await Interaction.response.send_message(
+            f"You are betting {self.value} coins. Are you sure?", view=view
+        )
 
     async def changeValue(self, Interaction: discord.Interaction, label: str):
         money = int(label[1:])
