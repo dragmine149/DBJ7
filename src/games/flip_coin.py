@@ -11,7 +11,7 @@ from src.utils.MoneySelector import MoneySelector
 from ..utils.enums import Coin_State
 
 logger = logging.getLogger("games.flip_coin.log")
-logger.info("Initalised")
+logger.info("Initalized")
 
 
 

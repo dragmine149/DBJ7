@@ -15,8 +15,6 @@ import signal
 import subprocess
 import traceback
 
-from src.game_loader import game_loader
-
 # File check
 try:
     os.mkdir("logs")
@@ -75,10 +73,8 @@ class GameHandler(FileSystemEventHandler):
         if not event.is_directory:  # checks for file modified instead of file creation
             game_log.info(f"Game source code changed: {event.src_path}")
             if event.src_path.endswith(".py") and not event.src_path.startswith("_"):
-                game_log.info("Reloading...")
-                reload = os.path.basename(event.src_path)[:-3]
-                cog: game_loader = bot.get_cog("Games")
-                game_log.info("Reload status " + cog.reload_game(reload))
+                asyncio.run(bot.reload_extension("src.game_loader"))
+                game_log.info("Reloaded game loader")
 
 
 observer.schedule(FileHandler(), "src", recursive=False)

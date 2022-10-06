@@ -6,6 +6,7 @@
 - [ ] games
   - [x] Flip a coin
   - [ ] Black Jack?
+  - [x] random number range
 
 ## testing
 
@@ -13,7 +14,8 @@
 - [ ] games
   - [x] Flip a coin
   - [ ] Black Jack?
-
+  - [x] random number range
+  
 ## ready
 
 - [ ] accounting
