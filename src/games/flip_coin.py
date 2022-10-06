@@ -8,17 +8,13 @@ from discord.ext import commands
 
 from src.utils import bank, game_template, uis
 from src.utils.MoneySelector import MoneySelector
+from ..utils.enums import Coin_State
 
 logger = logging.getLogger("games.flip_coin.log")
 logger.info("Initalised")
 
 
-class Coin_State(aenum.MultiValueEnum):
-    heads = 1, "heads"
-    tails = 0, "tails"
 
-    def __str__(self):
-        return self.name
 
 
 class FlipCoin(game_template.Template):

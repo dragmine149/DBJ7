@@ -74,7 +74,7 @@ class GuessNumber(game_template.Template):
             return
 
         await self.interaction.edit_original_response(
-            content=f"Guess a number between 1 and {range} by type it in chat!",
+            content=f"Guess a number between 0 and {range} by type it in chat!",
             view=None,
         )
         try:
@@ -87,6 +87,7 @@ class GuessNumber(game_template.Template):
                     )
                 ).content
             )
+            assert self.answer > 0
         except asyncio.TimeoutError:
             return await self.interaction.response.send_message(
                 "You took too long to answer", ephemeral=True
@@ -94,6 +95,10 @@ class GuessNumber(game_template.Template):
         except ValueError:
             return await self.interaction.response.send_message(
                 "You didn't enter a number", ephemeral=True
+            )
+        except AssertionError:
+            return await self.interaction.response.send_message(
+                "Number lower than 0 isn't allowed"
             )
         confirmation = uis.Multiple_Buttons()
         confirmation.Add_Button(
