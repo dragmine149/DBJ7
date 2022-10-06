@@ -78,6 +78,10 @@ class Multiple_Buttons(ui.View):
     def choosen(self) -> "Button":
         return [button for button in self.components if button.clicked][0]
 
+    def Edit_Button(self, index, **kwargs):
+        # TODO: make it so we can edit a button on the go, instead of recreating a button.
+        pass
+
 
 # Pretty much taken from the exmaples: https://github.com/Rapptz/discord.py/blob/master/examples/views/dropdown.py just modified
 class Dropdown(ui.Select):

@@ -40,6 +40,7 @@ class MoneySelector:
             callback (_type_, optional): The function which gets callbacked once they are done with the input. Defaults to None.
         """
         self.Interaction = Interaction
+        self.owner = self.Interaction.user
         self.callback = callback
         if self.callback is None:
             self.callback = self.defaultCallBack
@@ -48,6 +49,18 @@ class MoneySelector:
 
         self.view = uis.Multiple_Buttons(
             [
+                {
+                    "label": "+all",
+                    "callback": self.changeValue,
+                    "style": discord.ButtonStyle.primary,
+                    "emoji": "💵",
+                },
+                {
+                    "label": "+1000",
+                    "callback": self.changeValue,
+                    "style": discord.ButtonStyle.primary,
+                    "emoji": "💵",
+                },
                 {
                     "label": "+100",
                     "callback": self.changeValue,
@@ -65,6 +78,20 @@ class MoneySelector:
                     "callback": self.changeValue,
                     "style": discord.ButtonStyle.primary,
                     "emoji": "💵",
+                },
+                {
+                    "label": "-all",
+                    "callback": self.changeValue,
+                    "style": discord.ButtonStyle.danger,
+                    "emoji": "💴",
+                    "row": 1,
+                },
+                {
+                    "label": "-1000",
+                    "callback": self.changeValue,
+                    "style": discord.ButtonStyle.danger,
+                    "emoji": "💴",
+                    "row": 1,
                 },
                 {
                     "label": "-100",
@@ -97,7 +124,14 @@ class MoneySelector:
             ]
         )
 
+
     async def confirmCallback(self, Interaction: discord.Interaction, label: str):
+        if Interaction.user.id != self.owner.id:
+            return await Interaction.response.send_message(
+                "You are not allowed to confirm for the owner of this interaction",
+                ephemeral=True
+            )
+        
         if label == "yes":
             await self.betMsg.delete_original_response()
             return await self.callback(self.value)
@@ -135,35 +169,45 @@ class MoneySelector:
         )
 
     async def changeValue(self, Interaction: discord.Interaction, label: str):
-        money = int(label[1:])
-        account = await bank.Player_Status.get_by_id(Interaction.user.id)
+        if Interaction.user.id != self.owner.id:
+            return await Interaction.response.send_message(
+                "You are not allowed to change the value of this interaction!",
+                ephemeral=True
+            )
+        money = 0
+        if label[1:] == "all":
+            money = self.account.money
+        else:
+            money = int(label[1:])
 
         if label[0] == "+":
-            if account.money < self.value + money:
+            if self.account.money < self.value + money:
                 return await Interaction.response.send_message(
-                    f"That bid was higher than your money that your currently have! Go get some money if you want to bid higher!\nMoney that you currently having: {account.money}\nAmount of money you going to bid: {self.value + money}",
+                    f"That bid was higher than your money that your currently have! Go get some money if you want to bid higher!\nMoney that you currently having: {self.account.money}\nAmount of money you going to bid: {self.value + money}",
                     ephemeral=True,
                 )
             self.value += money
         if label[0] == "-":
             if self.value - money < 0:
-                await Interaction.response.send_message(
+                return await Interaction.response.send_message(
                     "You can't bid negative money!", ephemeral=True
                 )
+            self.value -= money
 
         await Interaction.response.send_message(
-            content=f"Changed ammount betting by: {money}", ephemeral=True
+            content=f"Changed ammount betting by: {label[0]}{money}", ephemeral=True
         )
         await self.Interaction.edit_original_response(
-            content=f"How much money do you want to bet? Currently betting: {self.value}",
+            content=f"How much money do you want to bet? Currently betting: {self.value}coins\n\nYour limit: {self.account.money}coins",
             view=self.view,
         )
 
     async def show_message(self):
         await self.Interaction.edit_original_response(
-            content=f"How much money do you want to bet? Currently betting: {self.value}",
+            content=f"How much money do you want to bet? Currently betting: {self.value}coins\n\nYour limit: {self.account.money}coins",
             view=self.view,
         )
 
     async def get_money(self):
+        self.account = await bank.Player_Status.get_by_id(self.Interaction.user.id)
         await self.show_message()
