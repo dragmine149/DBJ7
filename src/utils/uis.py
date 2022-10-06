@@ -51,7 +51,7 @@ class Multiple_Buttons(ui.View):
     """
 
     def __init__(self, data=[]):
-        super().__init__()
+        super().__init__(timeout=60)
 
         for buttonData in data:
             self.Add_Button(**buttonData)
@@ -118,7 +118,7 @@ class DropdownView(ui.View):
             max_values (int, optional): Maxium amount of items the user can select. Defaults to 1.
             options (list, optional): The options to show in the ui. Defaults to [].
         """
-        super().__init__()
+        super().__init__(timeout=60)
         self.add_dropdown(callback, **kwargs)
 
     def add_dropdown(self, callback=None, **kwargs):
