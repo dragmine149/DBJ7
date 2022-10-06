@@ -1,3 +1,4 @@
+from cmath import log
 import dataclasses
 import logging
 import os
@@ -10,7 +11,7 @@ from discord.ext import commands
 try:
     import orjson as json
 except ImportError:
-    import json
+    import json  # type: ignore
 
 from .fileHandler import FileHandler
 
@@ -34,7 +35,7 @@ class Player_Status:
     Also save values on modify :pausechamp:
     """
 
-    user: discord.User = 0
+    user: discord.User = 0  # type: ignore
     money: int = 0
     debt: typing.Optional[int] = 0
     unlucky: typing.Union[int, float, None] = 0
@@ -47,8 +48,13 @@ class Player_Status:
     async def get_by_id(cls, user_id: int) -> "Player_Status":
         try:
             data = await FileHandler().ReadFile(f"{user_id}.json")
-        except (FileNotFoundError, json.JSONDecodeError):
+        except FileNotFoundError:
+            logger.warning(f"File not found for {user_id}. Creating new user")
             return await cls.initialize_new_user(user_id)
+        except json.JSONDecodeError:
+            logger.error(f"json data saved incorrectly! Resting user {user_id} data!")
+            return await cls.initialize_new_user(user_id)
+
         return cls(
             discord.utils.get(bot.users, id=user_id),
             data["money"],
