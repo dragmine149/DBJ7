@@ -53,6 +53,18 @@ main = MoneySelector(interaction, moneyCallback)
 main.get_money()
 ```
 
+There are other features that can be put in the class as well to save the user time or to make it look better.
+Some of these features include aliases or name.
+
+Aliases lets the user enter one of the alvalible inputs for all of them to work, user has to enter less, win win.
+Name just is there to make it look better. For example instead of sending `gameTest` to the user, they can send `game test` which looks better and can be easier to read.
+
+```py
+class gameTest:
+    aliases = ["test", "idk"]
+    name = "game test"
+```
+
 ## Testing the file
 
 Due to the nature of how these files are loaded, there is no need to restart the bot after each load, just run the command `{prefix}reloadgames`.

@@ -10,6 +10,10 @@ from discord.ext import commands
 
 from .utils import bank, uis  # type: ignore
 
+
+from watchdog.events import FileSystemEventHandler
+from watchdog.observers.polling import PollingObserver
+
 """
 game_loader
 - A loader designed to keep games seperate from the main bot
@@ -44,6 +48,21 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         self.msg: discord.Message | None = None
         bank.bot = bot
 
+        observer = PollingObserver()
+
+        def on_modified(event):
+            if not event.is_directory:  # checks for file modified instead of file creation
+               self.logger.info(
+                   f"Game source code changed: {event.src_path}")
+               if event.src_path.endswith(".py") and not event.src_path.startswith("_"):
+                   self.reload_game(os.path.split(event.src_path)[1][:-3])
+                   self.logger.info("Reloaded game loader")
+
+        eH = FileSystemEventHandler()
+        eH.on_modified = on_modified
+        observer.schedule(eH, "src/games", recursive=False)
+        observer.start()
+
         # Startup loding of games
         self.reload_games()
 
@@ -65,7 +84,6 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
 
     async def game_cancel(self, Interaction: discord.Interaction):
         await Interaction.response.send_message("Canceled playing...", ephemeral=True)
-        # delete old messages?
 
     async def game_premethod(self, Interaction: discord.Interaction, label: str):
         await self.confirmInteract.delete()  # delete old stuff
@@ -114,10 +132,31 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         self, ctx: commands.Context, game: typing.Optional[str]
     ) -> bool:
         for possibleGames in self.games:
-            if type(possibleGames).__name__ == game:
+            
+            orGameName = type(possibleGames).__name__
+            gameName = ""
+            try:
+                gameName = possibleGames.name
+            except AttributeError:
+                self.logger.warning(f"{gameName} has no attribute `name`")
+                gameName = orGameName
+            
+            if gameName == game:
                 self.chosenGame = game  # type: ignore
                 await self.game_preLoad(ctx, [str(game)])
                 return True
+
+            # Suport for game name aliases
+            try:
+                aliases = possibleGames.aliases
+                if game in aliases:
+                    self.chosenGame = game  # type: ignore
+                    await self.game_preLoad(ctx, [orGameName])
+                    return True
+
+            except AttributeError:
+                self.logger.warning(
+                    f"{orGameName} has no attribute `aliases` please refer to src.games.README.md for more information")
 
         await ctx.send("Game not found in currently loaded games...")
         return False
@@ -198,8 +237,15 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
                 classInfo = moduleInfo.game_setup(self.bot)
             except AttributeError:
                 self.logger.error(
-                    f"File src.games.{module} does not contain a function called 'game_setup'! Please check the spelling of the function"
+                    f"File src.games.{module} failed to load! Either because of below error or missing function `game_setup`"
                 )
+                self.logger.error(traceback.format_exc())
+                return "Failed import"
+            except Exception:  # Anything else
+                self.logger.error(
+                    f"File src.games.{module} failed to load! Skipping! (Please see the error log below)"
+                )
+                self.logger.error(traceback.format_exc())
                 return "Failed import"
 
             self.game_module.append(moduleInfo)
@@ -234,6 +280,8 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
                 f"File src.games.{module} does not contain a function called 'game_setup'! Please check the spelling of the function"
             )
             return "Failed reload"
+        except RuntimeError:
+            self.logger.error("File observer might have stopped for `src.games`")
 
     # Reload all game modules
     def reload_games(self, module=None) -> str:
