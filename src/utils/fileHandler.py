@@ -4,7 +4,7 @@ from datetime import datetime
 
 import aiofiles
 import discord
-import orjson
+import orjson as json
 
 
 
