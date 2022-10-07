@@ -13,6 +13,7 @@ except ImportError:
     import json  # type: ignore
 
 from .fileHandler import FileHandler
+import asyncio
 
 logger = logging.getLogger("bot.src.utils.bank")
 
@@ -31,7 +32,7 @@ class Inventory:
     items: typing.Dict[str, int] = dataclasses.field(default_factory=dict)
 
     @property
-    def to_dict(self):
+    def to_dict(self) -> dict[str, typing.Dict[str, int]]:
         return {
             "items": self.items
         }
@@ -50,7 +51,7 @@ class Player_Status:
     wins: int = 0
     loses:int = 0
     additional_data: typing.Optional[typing.Dict[str,typing.Any]] = None
-    inventory: Inventory = Inventory({})
+    inventory: Inventory = Inventory()
     def __str__(self) -> str:
         return f"{self.user} has {self.money} coins and in debt of {self.debt} coins and have unluckiness percent of {self.unlucky}%"
 
@@ -119,7 +120,8 @@ class Player_Status:
             "wins": self.wins,
             "loses": self.loses,
             "additional_data": self.additional_data,
-            "inventory": dataclasses.asdict(self.inventory),
+            "inventory": self.inventory.to_dict,
+            "debt": self.debt
         }
 
     def __setattr__(self, __name: str, __value: typing.Any) -> None:
@@ -129,8 +131,10 @@ class Player_Status:
             f"Transaction triggered from {self.user} to {__name} with value of {__value}"
         )
         self.__dict__[__name] = __value
-        load = self.to_dict
-        load[__name] = __value
         bot.loop.create_task(
-            FileHandler().SaveFile(f"{self.user.id}.json",load)
+            self.save()
         )
+    async def save(self):
+        data = self.to_dict
+        await FileHandler().SaveFile(f"{self.user.id}.json",data)
+        
