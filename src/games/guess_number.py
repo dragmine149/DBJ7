@@ -49,14 +49,16 @@ class GuessNumber(game_template.Template):
             await self.interaction.edit_original_response(
                 content=f"Your answer was too low\nThe number was {self.number}\nPrize: -{self.bet +(self.bet * self.mapped[self.range])}"
             )
-            self.account.money -= self.bet + \
-                (self.bet * self.mapped[self.range])  # type: ignore
+            self.account.money -= self.bet + (
+                self.bet * self.mapped[self.range]
+            )  # type: ignore
         elif self.number < self.answer:
             await self.interaction.edit_original_response(
                 content=f"Your answer was too high\nThe number was {self.number}\nPrize: -{self.bet +(self.bet * self.mapped[self.range])}"
             )
-            self.account.money -= self.bet + \
-                (self.bet * self.mapped[self.range])  # type: ignore
+            self.account.money -= self.bet + (
+                self.bet * self.mapped[self.range]
+            )  # type: ignore
 
     async def confirmation_no(self, interaction: discord.Interaction, label: str):
         await interaction.response.send_message("Cancelled", ephemeral=True)
