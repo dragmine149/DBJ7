@@ -54,17 +54,17 @@ main.get_money()
 ```
 
 There are other features that can be put in the class as well to save the user time or to make it look better.
-Some of these features include aliases or name.
+Some of these features include aliases or modName.
 
 Aliases lets the user enter one of the alvalible inputs for all of them to work, user has to enter less, win win.
-Name just is there to make it look better. For example instead of sending `gameTest` to the user, they can send `game test` which looks better and can be easier to read.
+modName just is there to make it look better. For example instead of sending `gameTest` to the user, they can send `game test` which looks better and can be easier to read. (It's called modName to avoid conflicts with other information)
 
 These **Must** go below the doc string otherwise the info wont work.
 
 ```py
 class gameTest:
     aliases = ["test", "idk"]
-    name = "game test"
+    modName = "game test"
 ```
 
 ## Testing the file
@@ -91,9 +91,9 @@ Fix: create function `start` with paramaters `(self, Interaction)`
 
 View: Shows in the dropdown
 
-Cause: A __doc__ method wasn't found in the class
+Cause: A `__doc__` method wasn't found in the class
 
-Fix: add a __doc__ menu in the class (example above)
+Fix: add a `__doc__` menu in the class (example above)
 
 #### Exception 3: No Emoji Provided (Doesn't break)
 

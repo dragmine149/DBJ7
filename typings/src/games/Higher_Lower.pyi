@@ -9,7 +9,7 @@ logger: Incomplete
 
 class HigherOrLower(game_template.Template):
     aliases: Incomplete
-    name: str
+    modName: str
     bot: Incomplete
     currentCard: int
     correct: int

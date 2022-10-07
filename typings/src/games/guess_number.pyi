@@ -5,7 +5,7 @@ from src.utils import MoneySelector as MoneySelector, bank as bank, game_templat
 
 class GuessNumber(game_template.Template):
     bot: Incomplete
-    bet: Incomplete
+    bet: int
     interaction: Incomplete
     account: Incomplete
     confirmed: bool
