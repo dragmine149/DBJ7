@@ -1,15 +1,14 @@
-import orjson as json
-
 import os
+import typing
+from datetime import datetime
 
 import aiofiles
 import discord
-from datetime import datetime
-import typing
+import orjson as json
+
 
 def load_bank():
-    from .bank import Player_Status, Inventory
-
+    pass
 
 
 class FileHandler:
@@ -28,22 +27,21 @@ class FileHandler:
             os.mkdir("Data/" + parents)
 
         async with aiofiles.open(f"Data/{name}", "wb") as f:
-            data = json.dumps(data,default=self.serializer)  # type: ignore
+            data = json.dumps(data, default=self.serializer)  # type: ignore
             if isinstance(data, str):
                 data = data.encode()  # orjson
             await f.write(data)
 
-    def serializer(self,obj) -> typing.Any:
+    def serializer(self, obj) -> typing.Any:
         load_bank()
         if isinstance(obj, datetime):
             return obj.timestamp()
-        elif isinstance(obj, (discord.User,discord.Member,discord.Object)):
+        elif isinstance(obj, (discord.User, discord.Member, discord.Object)):
             return obj.id
-        elif isinstance(obj, (Player_Status, Inventory)): # ignore
+        elif isinstance(obj, (Player_Status, Inventory)):  # ignore
             return obj.to_dict
         else:
             return obj.__dict__
-        
 
     async def ReadFile(self, name: str) -> dict:
         """Read data from a file
