@@ -12,8 +12,8 @@ try:
 except ImportError:
     import json  # type: ignore
 
+
 from .fileHandler import FileHandler
-import asyncio
 
 logger = logging.getLogger("bot.src.utils.bank")
 
@@ -34,9 +34,9 @@ class Inventory:
 
     @property
     def to_dict(self) -> dict[str, typing.Dict[str, int]]:
-        return {
-            "items": self.items
-        }
+        return {"items": self.items}
+
+
 @dataclasses.dataclass
 class Player_Status:
     """
@@ -50,9 +50,10 @@ class Player_Status:
     unlucky: typing.Union[int, float, None] = 0
     last_paid_debt: typing.Union[datetime, None] = None
     wins: int = 0
-    loses:int = 0
-    additional_data: typing.Optional[typing.Dict[str,typing.Any]] = None
+    loses: int = 0
+    additional_data: typing.Optional[typing.Dict[str, typing.Any]] = None
     inventory: Inventory = Inventory()
+
     def __str__(self) -> str:
         return f"{self.user} has {self.money} coins and in debt of {self.debt} coins and have unluckiness percent of {self.unlucky}%"
 
@@ -124,7 +125,7 @@ class Player_Status:
             "loses": self.loses,
             "additional_data": self.additional_data,
             "inventory": self.inventory.to_dict,
-            "debt": self.debt
+            "debt": self.debt,
         }
 
     def __setattr__(self, __name: str, __value: typing.Any) -> None:
@@ -134,10 +135,8 @@ class Player_Status:
             f"Transaction triggered from {self.user} to {__name} with value of {__value}"
         )
         self.__dict__[__name] = __value
-        bot.loop.create_task(
-            self.save()
-        )
+        bot.loop.create_task(self.save())
+
     async def save(self):
         data = self.to_dict
-        await FileHandler().SaveFile(f"{self.user.id}.json",data)
-        
+        await FileHandler().SaveFile(f"{self.user.id}.json", data)
