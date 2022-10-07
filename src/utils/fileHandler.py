@@ -6,8 +6,10 @@ except ImportError:
 import os
 
 import aiofiles
-
-
+import discord
+from datetime import datetime
+import typing
+from .bank import Player_Status, Inventory
 class FileHandler:
     def __init__(self) -> None:
         pass
@@ -24,10 +26,21 @@ class FileHandler:
             os.mkdir("Data/" + parents)
 
         async with aiofiles.open(f"Data/{name}", "wb") as f:
-            data = json.dumps(data)  # type: ignore
+            data = json.dumps(data,default=self.serializer)  # type: ignore
             if isinstance(data, str):
                 data = data.encode()  # orjson
             await f.write(data)
+
+    def serializer(self,obj) -> typing.Any:
+        if isinstance(obj, datetime):
+            return obj.timestamp()
+        elif isinstance(obj, (discord.User,discord.Member,discord.Object)):
+            return obj.id
+        elif isinstance(obj, (Player_Status, Inventory)):
+            return obj.to_dict
+        else:
+            raise ValueError("Unable to verify")
+        
 
     async def ReadFile(self, name: str) -> dict:
         """Read data from a file

@@ -26,7 +26,15 @@ def __getattr__(name: str) -> typing.Any:
         return bot
     return globals()[name]
 
+@dataclasses.dataclass
+class Inventory:
+    items: typing.Dict[str, int] = dataclasses.field(default_factory=dict)
 
+    @property
+    def to_dict(self):
+        return {
+            "items": self.items
+        }
 @dataclasses.dataclass
 class Player_Status:
     """
@@ -42,6 +50,7 @@ class Player_Status:
     wins: int = 0
     loses:int = 0
     additional_data: typing.Optional[typing.Dict[str,typing.Any]] = None
+    inventory: Inventory = Inventory({})
     def __str__(self) -> str:
         return f"{self.user} has {self.money} coins and in debt of {self.debt} coins and have unluckiness percent of {self.unlucky}%"
 
@@ -66,7 +75,8 @@ class Player_Status:
             else None,
             data["wins"],
             data["loses"],
-            data["additional_data"]
+            data["additional_data"],
+            Inventory(data["inventory"]),
         )
 
     @classmethod
@@ -79,7 +89,8 @@ class Player_Status:
             "last_paid_debt": None,
             "wins": 0,
             "loses": 0,
-            "additional_data": {}
+            "additional_data": {},
+            "inventory": {},
         }
         await FileHandler().SaveFile(f"{user_id}.json", data)
         return cls(
@@ -88,11 +99,28 @@ class Player_Status:
             data["debt"],
             data["unlucky"],
             None,
+            data["wins"],
+            data["loses"],
+            data["additional_data"],
+            Inventory(data["inventory"]),
         )
 
     @staticmethod
     async def get_users() -> typing.List[int]:
         return (int(x[:-5]) for x in os.listdir("Data/"))
+
+    @property
+    def to_dict(self):
+        return {
+            "user": self.user.id,
+            "money": self.money,
+            "unlucky": self.unlucky,
+            "last_paid_debt": self.last_paid_debt.timestamp() if self.last_paid_debt else None,
+            "wins": self.wins,
+            "loses": self.loses,
+            "additional_data": self.additional_data,
+            "inventory": dataclasses.asdict(self.inventory),
+        }
 
     def __setattr__(self, __name: str, __value: typing.Any) -> None:
         if __name == "user":
@@ -100,9 +128,9 @@ class Player_Status:
         logger.info(
             f"Transaction triggered from {self.user} to {__name} with value of {__value}"
         )
-        load = bot.loop.create_task(FileHandler().ReadFile(f"{self.user.id}.json"))
+        self.__dict__[__name] = __value
+        load = self.to_dict
         load[__name] = __value
         bot.loop.create_task(
             FileHandler().SaveFile(f"{self.user.id}.json",load)
         )
-        self.__dict__[__name] = __value
