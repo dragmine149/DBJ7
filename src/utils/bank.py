@@ -27,6 +27,7 @@ def __getattr__(name: str) -> typing.Any:
         return bot
     return globals()[name]
 
+
 @dataclasses.dataclass
 class Inventory:
     items: typing.Dict[str, int] = dataclasses.field(default_factory=dict)
@@ -116,7 +117,9 @@ class Player_Status:
             "user": self.user.id,
             "money": self.money,
             "unlucky": self.unlucky,
-            "last_paid_debt": self.last_paid_debt.timestamp() if self.last_paid_debt else None,
+            "last_paid_debt": self.last_paid_debt.timestamp()
+            if self.last_paid_debt
+            else None,
             "wins": self.wins,
             "loses": self.loses,
             "additional_data": self.additional_data,
