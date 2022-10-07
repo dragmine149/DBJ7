@@ -22,7 +22,7 @@ class HigherOrLower(game_template.Template):
     aliases = ["HOL"]
     name = "Higher or Lower"
 
-    def __init__(self, bot: commands.bot) -> None:
+    def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
         bank.bot = bot
         self.currentCard = 0
