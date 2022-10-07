@@ -16,9 +16,9 @@ class GuessNumber(game_template.Template):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         bank.bot = bot
-        self.bet: int = None
-        self.interaction: discord.Interaction = None
-        self.account: bank.Player_Status = None
+        self.bet: int = 0
+        self.interaction: discord.Interaction = None  # type: ignore
+        self.account: bank.Player_Status = None  # type: ignore
         self.confirmed = False
 
     async def callback_money(self, value: int):
@@ -44,17 +44,19 @@ class GuessNumber(game_template.Template):
             await self.interaction.edit_original_response(
                 content=f"You won! You got the number right!\nPrize: {self.bet +(self.bet * self.mapped[self.range])}"
             )
-            self.account.money += self.bet + (self.bet * self.mapped[self.range])
+            self.account.money += self.bet + (self.bet * self.mapped[self.range])  # type: ignore
         elif self.number > self.answer:
             await self.interaction.edit_original_response(
                 content=f"Your answer was too low\nThe number was {self.number}\nPrize: -{self.bet +(self.bet * self.mapped[self.range])}"
             )
-            self.account.money -= self.bet + (self.bet * self.mapped[self.range])
+            self.account.money -= self.bet + \
+                (self.bet * self.mapped[self.range])  # type: ignore
         elif self.number < self.answer:
             await self.interaction.edit_original_response(
                 content=f"Your answer was too high\nThe number was {self.number}\nPrize: -{self.bet +(self.bet * self.mapped[self.range])}"
             )
-            self.account.money -= self.bet + (self.bet * self.mapped[self.range])
+            self.account.money -= self.bet + \
+                (self.bet * self.mapped[self.range])  # type: ignore
 
     async def confirmation_no(self, interaction: discord.Interaction, label: str):
         await interaction.response.send_message("Cancelled", ephemeral=True)
