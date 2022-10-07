@@ -20,7 +20,7 @@ class HigherOrLower(game_template.Template):
     """
 
     aliases = ["HOL"]
-    name = "Higher or Lower"
+    modName = "Higher or Lower"
 
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot

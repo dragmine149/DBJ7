@@ -196,13 +196,23 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
 
         gameOptions = []
         # Load games into the dropdown.
-        for game in self.games:
-            desc: str = game.__doc__ or "No description provided"
-            emoji = getattr(game, "display_emoji", "")
+        for gameInfo in self.games:
+            if gameInfo is None:
+                self.logger.error(f"Found None as a game in self.games")
+                continue
+            
+            desc: str = gameInfo.__doc__ or "No description provided"
+            emoji = getattr(gameInfo, "display_emoji", "")
+
+            gameName: str = type(gameInfo).__name__
+            try:
+                gameName = gameInfo.modName
+            except AttributeError:
+                self.logger.warning(f"{gameName} has no attribute `modName`")
 
             gameOptions.append(
                 discord.SelectOption(
-                    label=type(game).__name__, description=desc, emoji=emoji
+                    label=gameName, description=desc, emoji=emoji
                 )
             )
 
@@ -284,6 +294,8 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             return "Failed reload"
         except RuntimeError:
             self.logger.error("File observer might have stopped for `src.games`")
+        
+        return "Error return! (Something failed badly)"
 
     # Reload all game modules
     def reload_games(self, module=None) -> str:
