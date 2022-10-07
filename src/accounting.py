@@ -39,6 +39,9 @@ class Accounting(commands.Cog):
 
     @account.command()
     async def info(self, ctx: commands.Context, member: discord.User = None):
+        """
+        Retrieve the information of a user
+        """
         member = member if member else ctx.author
         if member.bot:
             return await ctx.reply(
@@ -64,6 +67,9 @@ class Accounting(commands.Cog):
     @commands.cooldown(1, 86400, commands.BucketType.user)
     @account.command()
     async def daily(self, ctx: commands.Context):
+        """
+        Claim an extra 1000 coins per day
+        """
         account = await bank.Player_Status.get_by_id(ctx.author.id)
         account.money += 1000
         await ctx.reply(
@@ -91,6 +97,12 @@ class Accounting(commands.Cog):
     async def pay_debt(
         self, ctx: commands.Context, pay: int = random.randint(100, 500)
     ):
+        """
+        Pay your debt to the bank.
+
+        Args:
+            pay (int, optional): The amount to pay. Defaults to random.randint(100, 500).
+        """
         account = await bank.Player_Status.get_by_id(ctx.author.id)
         if pay > account.money:
             return await ctx.reply(
@@ -134,6 +146,11 @@ class Accounting(commands.Cog):
     @account.command()
     @commands.cooldown(1, 86400, commands.BucketType.user)
     async def borrow_money(self, ctx: commands.Context, amount: int = 1000):
+        """Borrow money from the bank
+
+        Args:
+            amount (int, optional): The amount of money to borrow. Defaults to 1000.
+        """
         account = await bank.Player_Status.get_by_id(ctx.author.id)
         interest = round(random.random(), 2)
         if (

@@ -59,6 +59,8 @@ Some of these features include aliases or name.
 Aliases lets the user enter one of the alvalible inputs for all of them to work, user has to enter less, win win.
 Name just is there to make it look better. For example instead of sending `gameTest` to the user, they can send `game test` which looks better and can be easier to read.
 
+These **Must** go below the doc string otherwise the info wont work.
+
 ```py
 class gameTest:
     aliases = ["test", "idk"]
