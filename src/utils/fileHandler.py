@@ -1,7 +1,4 @@
-try:
-    import orjson as json  # speed
-except ImportError:
-    import json  # type: ignore
+import orjson as json
 
 import os
 
@@ -9,7 +6,12 @@ import aiofiles
 import discord
 from datetime import datetime
 import typing
-from .bank import Player_Status, Inventory
+
+def load_bank():
+    from .bank import Player_Status, Inventory
+
+
+
 class FileHandler:
     def __init__(self) -> None:
         pass
@@ -32,14 +34,15 @@ class FileHandler:
             await f.write(data)
 
     def serializer(self,obj) -> typing.Any:
+        load_bank()
         if isinstance(obj, datetime):
             return obj.timestamp()
         elif isinstance(obj, (discord.User,discord.Member,discord.Object)):
             return obj.id
-        elif isinstance(obj, (Player_Status, Inventory)):
+        elif isinstance(obj, (Player_Status, Inventory)): # ignore
             return obj.to_dict
         else:
-            raise ValueError("Unable to verify")
+            return obj.__dict__
         
 
     async def ReadFile(self, name: str) -> dict:
