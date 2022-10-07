@@ -6,7 +6,6 @@ from src.utils import bank as bank
 
 class Template:
     aliases: typing.List
-    name: str
     bot: Incomplete
     bet: int
     interaction: Incomplete
