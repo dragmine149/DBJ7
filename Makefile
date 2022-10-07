@@ -6,7 +6,7 @@ beauty:
 	python -m flake8 .  --exit-zero
 	python -m autoflake --remove-all-unused-imports --remove-unused-variables --in-place -r .
 install-beautifier:
-	pip install isort black flake8 autoflake
+	pip install isort black flake8 autoflake mypy
 stubgen:
 	stubgen -p src -o typings
 	stubgen bot.py -o typings
