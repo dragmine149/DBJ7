@@ -225,7 +225,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             self.logger.error("Http error whilst trying to send message")
             self.logger.debug(HTTP)
             self.logger.debug(traceback.format_exc())
-            
+
             self.logger.info("-----------")
             for option in gameOptions:
                 self.logger.debug(option)
