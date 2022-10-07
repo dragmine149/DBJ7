@@ -202,7 +202,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
                 continue
 
             desc: str = gameInfo.__doc__ or "No description provided"
-            emoji = getattr(gameInfo, "display_emoji", "")
+            emoji = getattr(gameInfo, "display_emoji", "?")
 
             gameName: str = type(gameInfo).__name__
             try:
@@ -213,7 +213,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             gameOptions.append(
                 discord.SelectOption(label=gameName, description=desc, emoji=emoji)
             )
-
+            print(gameOptions)
         view = uis.DropdownView(
             callback=self.game_preLoad,
             placeholder="Select game to play",
