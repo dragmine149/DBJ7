@@ -234,7 +234,6 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         Returns:
             str: What happened on reloading
         """
-
         # Check if module already loaded
         if module not in self.module_names:
             self.logger.info(f"Adding {module} to game_loader")
@@ -304,8 +303,9 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         # Reload all modules first
         for game in os.listdir("src/games"):  # loop through all modules
             if game.endswith(".py"):
-                log = self.reload_game(game[:-3])
-                self.logger.info(f"{game[:-3]}: {log}")
+                if game != "__init__.py":
+                    log = self.reload_game(game[:-3])
+                    self.logger.info(f"{game[:-3]}: {log}")
 
         self.logger.info("---------------------")
         return "Reloded all games"
