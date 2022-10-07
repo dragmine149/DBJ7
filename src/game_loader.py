@@ -200,7 +200,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             if gameInfo is None:
                 self.logger.error(f"Found None as a game in self.games")
                 continue
-            
+
             desc: str = gameInfo.__doc__ or "No description provided"
             emoji = getattr(gameInfo, "display_emoji", "")
 
@@ -211,9 +211,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
                 self.logger.warning(f"{gameName} has no attribute `modName`")
 
             gameOptions.append(
-                discord.SelectOption(
-                    label=gameName, description=desc, emoji=emoji
-                )
+                discord.SelectOption(label=gameName, description=desc, emoji=emoji)
             )
 
         view = uis.DropdownView(
@@ -294,7 +292,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             return "Failed reload"
         except RuntimeError:
             self.logger.error("File observer might have stopped for `src.games`")
-        
+
         return "Error return! (Something failed badly)"
 
     # Reload all game modules
