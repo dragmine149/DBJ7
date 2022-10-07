@@ -202,7 +202,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
                 continue
 
             desc: str = gameInfo.__doc__ or "No description provided"
-            emoji = getattr(gameInfo, "display_emoji", "?")
+            emoji = getattr(gameInfo, "display_emoji", "❔")
 
             gameName: str = type(gameInfo).__name__
             try:
@@ -219,7 +219,17 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             placeholder="Select game to play",
             options=gameOptions,
         )
-        self.msg = await ctx.send("Pick a game to play!", view=view)
+        try:
+            self.msg = await ctx.send("Pick a game to play!", view=view)
+        except discord.errors.HTTPException as HTTP:
+            self.logger.error("Http error whilst trying to send message")
+            self.logger.debug(HTTP)
+            self.logger.debug(traceback.format_exc())
+            
+            self.logger.info("-----------")
+            for option in gameOptions:
+                self.logger.debug(option)
+            self.logger.info("-----------")
 
     # reloads one game in particalar
     def reload_game(self, module: str) -> str:
