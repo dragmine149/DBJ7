@@ -7,7 +7,7 @@ import aiofiles
 import discord
 from discord.ext import commands
 
-from ..utils import MoneySelector, bank, game_template, uis
+from src.utils import MoneySelector, bank, game_template, uis
 
 
 @dataclasses.dataclass
@@ -47,7 +47,7 @@ class Bomb_Party(game_template.Template):
         self.account: bank.Player_Status = None
         self.multiplier = 1
 
-    async def money_callback(self, value: int) -> None:
+    async def money_callback(self, value: int, user) -> None:
         self.betting_value = value
         await self.difficulty_selector()
 

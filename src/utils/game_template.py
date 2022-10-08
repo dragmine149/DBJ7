@@ -12,6 +12,7 @@ class Template:
     """
 
     aliases: typing.List = []
+    multiplayer: bool = False
 
     def __init__(self, bot: commands.Bot):
         self.bot: commands.Bot = bot
@@ -19,7 +20,7 @@ class Template:
         self.bet: int = 0
         self.interaction: discord.Interaction = None  # type: ignore
 
-    async def money_callback(self, value: int) -> None:
+    async def money_callback(self, value: int, user: discord.Member) -> None:
         raise NotImplemented
 
     async def start(self, interaction: discord.Interaction):

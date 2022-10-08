@@ -131,7 +131,7 @@ class HigherOrLower(game_template.Template):
             content="", view=self.view, embed=self.GenerateEmbed()
         )
 
-    async def money_callback(self, value: int):
+    async def money_callback(self, value: int, user):
         """Callback function after selecting amount of money"""
         self.betValue = value
         self.account = await bank.Player_Status.get_by_id(self.Interaction.user.id)

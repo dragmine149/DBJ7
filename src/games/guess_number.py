@@ -21,7 +21,7 @@ class GuessNumber(game_template.Template):
         self.account: bank.Player_Status = None  # type: ignore
         self.confirmed = False
 
-    async def callback_money(self, value: int):
+    async def callback_money(self, value: int, user):
         self.bet = value
         await self.actually_starting_the_game_with_rapid_pace_on_god()
 

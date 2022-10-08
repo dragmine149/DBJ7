@@ -90,7 +90,7 @@ class FlipCoin(game_template.Template):
         else:
             self.account.unlucky += j
 
-    async def money_callback(self, value: int):
+    async def money_callback(self, value: int, user):
         self.betValue = value
         await self.pre_game()
 

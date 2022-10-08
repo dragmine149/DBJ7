@@ -32,15 +32,17 @@ from src.utils import bank, uis
 
 
 class MoneySelector:
-    def __init__(self, Interaction: discord.Interaction, callback=None) -> None:
+    def __init__(self, Interaction: discord.Interaction, callback=None, userOnly: bool=False) -> None:
         """Choose an amount of money with a couple of buttons
 
         Args:
             Interaction (discord.Interaction): The interaction message to edit
             callback (_type_, optional): The function which gets callbacked once they are done with the input. Defaults to None.
+            userOnly (bool): Whever to show the message only to the user
         """
         self.Interaction = Interaction
         self.owner = self.Interaction.user
+        self.userOnly = userOnly
         self.callback = callback
         if self.callback is None:
             self.callback = self.defaultCallBack
@@ -133,7 +135,7 @@ class MoneySelector:
 
         if label == "yes":
             await self.betMsg.delete_original_response()
-            return await self.callback(self.value)
+            return await self.callback(self.value, self.Interaction.user)
 
         await Interaction.response.send_message(
             content="Please enter new amount of money", ephemeral=True
@@ -141,8 +143,8 @@ class MoneySelector:
         await self.betMsg.delete_original_response()
         return await self.get_money()
 
-    async def defaultCallBack(self, value):
-        await self.Interaction.edit_original_response(f"You choice {value}")
+    async def defaultCallBack(self, value, user):
+        await self.Interaction.edit_original_response(f"You choice {value}", ephermal=self.userOnly)
 
     async def FinishedCallback(self, Interaction: discord.Interaction, label: str):
         view = uis.Multiple_Buttons(
@@ -202,11 +204,24 @@ class MoneySelector:
         )
 
     async def show_message(self):
-        await self.Interaction.edit_original_response(
-            content=f"How much money do you want to bet? Currently betting: {self.value}coins\n\nYour limit: {self.account.money}coins",
-            view=self.view,
-        )
+        if not self.userOnly:
+            await self.Interaction.edit_original_response(
+                content=f"How much money do you want to bet? Currently betting: {self.value}coins\n\nYour limit: {self.account.money}coins",
+                view=self.view,
+            )
+        else:
+            await self.Interaction.followup.send(
+                content=f"How much money do you want to bet? Currently betting: {self.value}coins\n\nYour limit: {self.account.money}coins",
+                view=self.view,
+                ephemeral=True
+            )
 
     async def get_money(self):
         self.account = await bank.Player_Status.get_by_id(self.Interaction.user.id)
         await self.show_message()
+        
+        tO = await self.view.wait()
+        if tO:
+            await self.Interaction.edit_original_response(
+                content="Timed out! Automatically canceled",
+            )
