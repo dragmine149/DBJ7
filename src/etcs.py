@@ -8,6 +8,7 @@ from discord.ext import commands
 from config import config
 
 from .utils import time
+from .utils import uis
 
 
 class Stuff(
@@ -36,14 +37,27 @@ class Stuff(
             title="Credits", description="Thanks to everyone who using this bot!"
         )
 
-        embed.add_field(name="Creator", value="[timelessnesses#9443] ")
-        embed.add_field(name="Creator", value="[Dragmine149#5048]")
-        embed.add_field(
-            name="The bot is also open-source!",
-            value=config.git_repo,
+        embed.add_field(name="Creator", value="<@890913140278181909>")
+        embed.add_field(name="Creator", value="<@467718535897022479>")
+        
+        ButtonView = uis.Multiple_Buttons(
+            [
+                {
+                    "label": "github.com",
+                    "url": config.git_repo,
+                    "style": discord.ButtonStyle.primary,
+                    "emoji": "<:github:1028382704292606085>"
+                },
+                {
+                    "label": "itch.io",
+                    "url": "https://itch.io",
+                    "style": discord.ButtonStyle.primary,
+                    # No emoji for itch (Can't find one)
+                }
+            ]
         )
 
-        await ctx.send(embed=embed)
+        await ctx.send(embed=embed, view=ButtonView)
 
     @commands.hybrid_command(name="ping", aliases=["p"])
     async def ping(self, ctx: commands.Context):
