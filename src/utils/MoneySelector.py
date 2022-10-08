@@ -139,8 +139,11 @@ class MoneySelector:
         if label == "yes":
             await self.betMsg.delete_original_response()
             if self.userOnly:
-                await self.Interaction.edit_original_response(content="Finished, this can be dissmissed now (I can't manualy remove this message)", view=None)
-                
+                await self.Interaction.edit_original_response(
+                    content="Finished, this can be dissmissed now (I can't manualy remove this message)",
+                    view=None,
+                )
+
             return await self.callback(self.value, self.Interaction.user)
 
         await Interaction.response.send_message(

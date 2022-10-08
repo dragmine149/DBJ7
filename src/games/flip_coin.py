@@ -124,7 +124,7 @@ class FlipCoin(game_template.Template):
             content="Please select an option", view=view
         )
         await view.wait()
-        
+
     async def money_callback(self, value: int):
         self.betValue = value
         await self.pre_game()
