@@ -68,6 +68,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         # Startup loding of games
         self.reload_games()
 
+
     async def game_select(self, Interaction: discord.Interaction):
         for game in self.games:
             if (
@@ -88,25 +89,22 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
 
                 return  # stops the loop and the function
 
+    async def game_cancel(self, Interaction: discord.Interaction):
+        await Interaction.response.send_message("Canceled playing...", ephemeral=True)
+
     async def game_premethod(self, Interaction: discord.Interaction, label: str):
-        await self.confirmInteract.delete_original_response()  # delete old stuff
+        await self.confirmInteract.delete()  # delete old stuff
 
         if label == "Play game!":
             return await self.game_select(Interaction)
         if label == "Cancel":
-            return await Interaction.response.send_message(
-                "Canceled playing...", ephemeral=True
-            )
+            return await self.game_cancel(Interaction)
 
     async def game_preLoad(self, Interaction: discord.Interaction, data: list[str]):
         self.chosenGame = data[0]  # type: ignore
-        try:
-            if self.msg is not None:
-                await self.msg.delete_original_response()  # delete dropdown
-                self.msg = None
-        except AttributeError:
-            self.logger.error("Idk how this happened")
-            self.logger.debug(traceback.format_exc())
+        if self.msg is not None:
+            await self.msg.delete()  # delete dropdown message
+            self.msg = None
 
         view = uis.Multiple_Buttons(
             [
@@ -125,27 +123,34 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             ]
         )
 
-        await Interaction.response.send_message(f"Play {self.chosenGame}?", view=view)
+        # Checks the message and makes sure we have a message
+        msg = None
+        if Interaction.message is None:
+            raise ValueError("Interaction.message is None")
 
-        self.confirmInteract = Interaction
+        if type(Interaction.channel) is not discord.TextChannel:
+            raise ValueError("Command called not in a text channel!")
+
+        msg = await Interaction.channel.send(f"Play {self.chosenGame}?", view=view)
+
+        self.confirmInteract = msg
 
     async def process_gameInput(
-        self, Interaction: discord.Interaction, game: typing.Optional[str]
+        self, ctx: commands.Context, game: typing.Optional[str]
     ) -> bool:
         for possibleGames in self.games:
 
             orGameName = type(possibleGames).__name__
             gameName = ""
             try:
-                gameName = possibleGames.modName
+                gameName = possibleGames.name
             except AttributeError:
-                self.logger.warning(
-                    f"{possibleGames} has no attribute `modName`")
+                self.logger.warning(f"{gameName} has no attribute `name`")
                 gameName = orGameName
 
             if gameName == game:
                 self.chosenGame = game  # type: ignore
-                await self.game_preLoad(Interaction, [orGameName])
+                await self.game_preLoad(ctx, [orGameName])
                 return True
 
             # Suport for game name aliases
@@ -153,7 +158,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
                 aliases = possibleGames.aliases
                 if game in aliases:
                     self.chosenGame = game  # type: ignore
-                    await self.game_preLoad(Interaction, [orGameName])
+                    await self.game_preLoad(ctx, [orGameName])
                     return True
 
             except AttributeError:
@@ -161,42 +166,35 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
                     f"{orGameName} has no attribute `aliases` please refer to src.games.README.md for more information"
                 )
 
-        await Interaction.response.send_message(
-            "Game not found in currently loaded games..."
-        )
+        await ctx.send("Game not found in currently loaded games...")
         return False
 
-    @app_commands.command()
-    async def playgame(
-        self, Interaction: discord.Interaction, game: typing.Optional[str]
-    ):
+    @commands.hybrid_command(aliases=["play"])
+    async def playgame(self, ctx: commands.Context, game: typing.Optional[str]):
         """
         Choose a game to gamble coins on!
-
         Args:
             game (option, str): Tries and loads you straight into that game
         """
-        self.account = await bank.Player_Status.get_by_id(Interaction.user.id)
+        self.account = await bank.Player_Status.get_by_id(ctx.author.id)
 
         # Check for account paid debt
         if (
             self.account.last_paid_debt
             and (datetime.now() - self.account.last_paid_debt).days > 7
         ):
-            return await Interaction.response.send_message(
-                "You're prohibited to play any games since you have debts and you didn't paid any for a week straight. Go pay your debt to play the game!",
-                ephemeral=True,
+            return await ctx.reply(
+                "You're prohibited to play any games since you have debts and you didn't paid any for a week straight. Go pay your debt to play the game!"
             )
         # Check for unlucky being 1 (impossible)
         if self.account.unlucky == 1:
-            return await Interaction.response.send_message(
-                "Oh oh! Seems likes you can't win any games. Come back in a while, you might be more lucky then.",
-                ephemeral=True,
+            return await ctx.reply(
+                "Oh oh! Seems likes you can't win any games. Come back in a while, you might be more lucky then."
             )
 
         # Process the inputted game
         if game is not None and game != "":
-            result = await self.process_gameInput(Interaction, game)
+            result = await self.process_gameInput(ctx, game)
             # Return if succesffully found game
             if result:
                 return
@@ -215,7 +213,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             try:
                 gameName = gameInfo.modName
             except AttributeError:
-                self.logger.warning(f"{gameInfo} has no attribute `modName`")
+                self.logger.warning(f"{gameName} has no attribute `modName`")
 
             gameOptions.append(
                 discord.SelectOption(label=gameName, description=desc, emoji=emoji)
@@ -226,8 +224,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             options=gameOptions,
         )
         try:
-            self.msg = Interaction
-            await Interaction.response.send_message("Pick a game to play!", view=view)
+            self.msg = await ctx.send("Pick a game to play!", view=view)
         except discord.errors.HTTPException as HTTP:
             self.logger.error("Http error whilst trying to send message")
             self.logger.debug(HTTP)
@@ -237,11 +234,6 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             for option in gameOptions:
                 self.logger.debug(option)
             self.logger.info("-----------")
-        except discord.errors.InteractionResponded:
-            self.msg = Interaction
-            await Interaction.response.edit_message(
-                content=f"Pick a game to play!", view=view
-            )
 
     # reloads one game in particalar
     def reload_game(self, module: str) -> str:
