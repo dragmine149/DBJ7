@@ -9,6 +9,7 @@ import discord
 from discord.ext import commands
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers.polling import PollingObserver
+from discord import app_commands
 
 from .utils import bank, uis  # type: ignore
 
@@ -164,7 +165,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         )
         return False
 
-    @commands.hybrid_command()
+    @app_commands.command()
     async def playgame(
         self, Interaction: discord.Interaction, game: typing.Optional[str]
     ):
