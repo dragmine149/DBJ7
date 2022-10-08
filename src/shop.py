@@ -86,7 +86,7 @@ class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
                     color=discord.Color.red()
                 )
             )
-        account.money += amount * item.__price__ * 0.75
+        account.money += (amount * item.__price__) * 0.75
         await ctx.reply(
             embed=discord.Embed(
                 title="Success",
