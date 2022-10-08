@@ -79,6 +79,7 @@ class FlipCoin(game_template.Template):
             )
 
     async def on_button_click(self, Interaction: discord.Interaction, label: str):
+        self.choosen = Coin_State(label.lower())
         self.account = await bank.Player_Status.get_by_id(Interaction.user.id)
         result = self.flip_coin(self.account.unlucky, Coin_State[label.lower()])  # type: ignore
         options = ["Heads", "Tails"]
@@ -124,7 +125,6 @@ class FlipCoin(game_template.Template):
             content="Please select an option", view=view
         )
         await view.wait()
-        self.choosen = Coin_State(view.choosen.label.lower())
 
     async def MultiCallback(self, Interaction: discord.Interaction, data):
         await Interaction.followup.send(
