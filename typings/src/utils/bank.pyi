@@ -8,8 +8,6 @@ from discord.ext import commands as commands
 logger: Incomplete
 bot: typing.Optional[commands.Bot]
 
-def __getattr__(name: str) -> typing.Any: ...
-
 class Inventory:
     items: typing.Dict[str, int]
     @property
@@ -29,16 +27,8 @@ class Effect:
     @classmethod
     def lucky_potion(cls): ...
     @classmethod
-    def fake_lucky_potion(cls): ...
-    @classmethod
     def wipe_effect(cls): ...
     def __init__(self, effect_name, effect_lucky_multiplier, effect_unlucky_multiplier, coin_multiplier, expire_time, game_name) -> None: ...
-
-class Effects:
-    effects: typing.List[Effect]
-    @property
-    def to_dict(self) -> dict[str, typing.Dict[str, int]]: ...
-    def __init__(self, effects) -> None: ...
 
 class Player_Status:
     user: discord.User
@@ -50,7 +40,7 @@ class Player_Status:
     loses: int
     additional_data: typing.Optional[typing.Dict[str, typing.Any]]
     inventory: Inventory
-    effects: Effects
+    effects: typing.List[Effect]
     @classmethod
     async def get_by_id(cls, user_id: int) -> Player_Status: ...
     @classmethod
