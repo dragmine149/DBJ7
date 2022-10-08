@@ -67,9 +67,9 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         # Startup loding of games
         self.reload_games()
 
-    async def game_select(self, Interaction: discord.Interaction, values: list[str]):
+    async def game_select(self, Interaction: discord.Interaction):
         for game in self.games:
-            if type(game).__name__ == self.chosenGame:
+            if type(game).__name__ == self.chosenGame or self.chosenGame in game.aliases or self.chosenGame == game.modName:
                 try:
                     await game.start(Interaction)
                 except AttributeError as e:
@@ -90,7 +90,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         await self.confirmInteract.delete()  # delete old stuff
 
         if label == "Play game!":
-            return await self.game_select(Interaction, [""])
+            return await self.game_select(Interaction)
         if label == "Cancel":
             return await self.game_cancel(Interaction)
 
@@ -144,7 +144,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
 
             if gameName == game:
                 self.chosenGame = game  # type: ignore
-                await self.game_preLoad(ctx, [str(game)])
+                await self.game_preLoad(ctx, [orGameName])
                 return True
 
             # Suport for game name aliases
