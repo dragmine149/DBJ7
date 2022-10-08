@@ -6,7 +6,7 @@ import discord
 from discord.ext import commands
 
 from src.utils import bank, game_template, uis
-from src.utils.enums import Coin_State
+from src.utils.enums import Coin_State, Items
 from src.utils.Multiplayer import Multiplayer
 
 logger = logging.getLogger("games.flip_coin.log")
@@ -48,6 +48,15 @@ class FlipCoin(game_template.Template):
         Args:
             unlucky (float): The unlucky percent of the user, this has to be a decimal number.
         """
+        if Items.lucky_potion in self.account.effects:
+            unlucky -= (
+                self.account.effects[
+                    self.account.effects.index(Items.lucky_potion)
+                ].effect_lucky_multiplier
+                / 10
+            )
+            if unlucky < 0:
+                unlucky = 0
         if unlucky < 0.01:
             unlucky = 0.01
             logger.warning(
@@ -77,6 +86,10 @@ class FlipCoin(game_template.Template):
         await Interaction.response.send_message("Flipping...", ephemeral=True)
         await asyncio.sleep(1.5)
         if result:
+            if Items.coin_multiplier in self.account.effects:
+                coins *= self.account.effects[
+                    self.account.effects.index(Items.coin_multiplier)
+                ].coin_multiplier
             await self.Interaction.edit_original_response(
                 content=f"It landed on {label}! You gained {coins} coins", view=None
             )

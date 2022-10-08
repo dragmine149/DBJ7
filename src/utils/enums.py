@@ -12,7 +12,7 @@ class Items(aenum.Enum):
         "coin multiplier",
         2000,
     )
-    wipe_effect = Effect.wipe_effect(), "Wipe any effect you have", "wipe effect", 5000
+    wipe_effect = Effect.wipe_effect(), "Wipe any effect you have", "wipe effect", 100
     lucky_potion = (
         Effect.lucky_potion(),
         "Increase your luck for 10 minutes",

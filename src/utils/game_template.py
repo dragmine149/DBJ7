@@ -23,5 +23,5 @@ class Template:
     async def money_callback(self, value: int, user: discord.Member) -> None:
         raise NotImplemented
 
-    async def start(self, interaction: discord.Interaction):
+    async def start(self, interaction: discord.Interaction) -> typing.NoReturn:
         raise NotImplemented
