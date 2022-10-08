@@ -137,9 +137,10 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             orGameName = type(possibleGames).__name__
             gameName = ""
             try:
-                gameName = possibleGames.name
+                gameName = possibleGames.modName
             except AttributeError:
-                self.logger.warning(f"{gameName} has no attribute `name`")
+                self.logger.warning(
+                    f"{possibleGames} has no attribute `modName`")
                 gameName = orGameName
 
             if gameName == game:
