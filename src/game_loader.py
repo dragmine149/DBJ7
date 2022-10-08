@@ -86,7 +86,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
                     self.logger.info(e)
                     self.logger.info(traceback.format_exc())
 
-                return  # stops the loop and the function        
+                return  # stops the loop and the function
 
     async def game_premethod(self, Interaction: discord.Interaction, label: str):
         await self.confirmInteract.delete_original_response()  # delete old stuff
@@ -94,7 +94,9 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         if label == "Play game!":
             return await self.game_select(Interaction)
         if label == "Cancel":
-            return await Interaction.response.send_message("Canceled playing...", ephemeral=True)
+            return await Interaction.response.send_message(
+                "Canceled playing...", ephemeral=True
+            )
 
     async def game_preLoad(self, Interaction: discord.Interaction, data: list[str]):
         self.chosenGame = data[0]  # type: ignore
@@ -236,7 +238,9 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             self.logger.info("-----------")
         except discord.errors.InteractionResponded:
             self.msg = Interaction
-            await Interaction.response.edit_message(content=f"Pick a game to play!", view=view)
+            await Interaction.response.edit_message(
+                content=f"Pick a game to play!", view=view
+            )
 
     # reloads one game in particalar
     def reload_game(self, module: str) -> str:
