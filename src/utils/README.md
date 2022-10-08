@@ -8,6 +8,33 @@ You can get player statuses like unluckiness/debts/money directly and informatio
 And you can get player by user's id with `await Player_Status.get_by_id(user_id)` which returns a instance of class with data required like money,debt,unlucky and last_paid_debt and if the user isn't exist it will create new one in database immediately  
 And you can get list of users in database with `await Player_Status.get_users()`
 
+## `Effect`
+
+A nice class for building information about effect that you want.
+
+```py
+from .utils import bank
+bank.Effect.new_effect(
+    effect_name: str,
+    game_name: str
+    effect_lucky_multiplier: float,
+    effect_unlucky_multiplier: float,
+    global_effect_lucky_multiplier: float,
+    global_effect_unlucky_multiplier: float,
+    coin_multiplier: float,
+    global_coin_multiplier: float,
+    expire_time: datetime
+)
+```
+
+Game name is for specific game so you can know if effect activated for this game or not
+
+I already have some preset for this! Don't worry!
+
+```py
+
+```
+
 ## example code
 
 ```py
