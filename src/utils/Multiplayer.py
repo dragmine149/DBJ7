@@ -34,14 +34,16 @@ class Multiplayer:
 
     async def AskCallback(self, Interaction: discord.Interaction, label: str):
         if label == "yes":
-            await Interaction.response.send_message(f"Waiting for {Interaction.user.mention} to place a bet...")
-            
+            await Interaction.response.send_message(
+                f"Waiting for {Interaction.user.mention} to place a bet..."
+            )
+
             self.data[str(Interaction.user.id)] = -10
             MS = MoneySelector(Interaction, self.MoneyCallback, True)
             await MS.get_money()
-            
+
             await self.Invite(Interaction, label)
-            
+
         if label == "no":
             await Interaction.response.send_message("Loading money class")
             MS = MoneySelector(Interaction, self.skipCallback)
@@ -127,12 +129,14 @@ class Multiplayer:
             view=self.buttonView,
         )
         await self.callback()
-    
+
     async def defaultCallback(self, Interaction: discord.Interaction, value):
         logger.warning("Multiplayer function was called without any callbacks!")
-        await Interaction.edit_original_response(content="Multiplayer function had no callback! Cancled!")
+        await Interaction.edit_original_response(
+            content="Multiplayer function had no callback! Cancled!"
+        )
 
-    async def callback(self, value:int=-1):
+    async def callback(self, value: int = -1):
         """Waits for information before sending back data
 
         Returns:
@@ -141,7 +145,7 @@ class Multiplayer:
         if value != -1:
             # Returns if they say no to multipalyer
             return await self.callbackFunc(self.Interaction, value)
-        
+
         await self.buttonView.wait()
 
         waiting_for = []

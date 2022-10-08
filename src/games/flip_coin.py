@@ -127,7 +127,9 @@ class FlipCoin(game_template.Template):
         self.choosen = Coin_State(view.choosen.label.lower())
 
     async def MultiCallback(self, Interaction: discord.Interaction, data):
-        await Interaction.followup.send(f"Retrieved {data} from multiplayer info", ephemeral=True)
+        await Interaction.followup.send(
+            f"Retrieved {data} from multiplayer info", ephemeral=True
+        )
         if type(data) == int:
             self.betValue = data
             return await self.pre_game()
