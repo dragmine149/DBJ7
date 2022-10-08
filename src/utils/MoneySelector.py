@@ -32,7 +32,9 @@ from src.utils import bank, uis
 
 
 class MoneySelector:
-    def __init__(self, Interaction: discord.Interaction, callback=None, userOnly: bool=False) -> None:
+    def __init__(
+        self, Interaction: discord.Interaction, callback=None, userOnly: bool = False
+    ) -> None:
         """Choose an amount of money with a couple of buttons
 
         Args:
@@ -144,7 +146,9 @@ class MoneySelector:
         return await self.get_money()
 
     async def defaultCallBack(self, value, user):
-        await self.Interaction.edit_original_response(f"You choice {value}", ephermal=self.userOnly)
+        await self.Interaction.edit_original_response(
+            f"You choice {value}", ephermal=self.userOnly
+        )
 
     async def FinishedCallback(self, Interaction: discord.Interaction, label: str):
         view = uis.Multiple_Buttons(
@@ -213,13 +217,13 @@ class MoneySelector:
             await self.Interaction.followup.send(
                 content=f"How much money do you want to bet? Currently betting: {self.value}coins\n\nYour limit: {self.account.money}coins",
                 view=self.view,
-                ephemeral=True
+                ephemeral=True,
             )
 
     async def get_money(self):
         self.account = await bank.Player_Status.get_by_id(self.Interaction.user.id)
         await self.show_message()
-        
+
         tO = await self.view.wait()
         if tO:
             await self.Interaction.edit_original_response(

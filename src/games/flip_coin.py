@@ -1,5 +1,4 @@
 import asyncio
-from code import interact
 import logging
 import random
 
@@ -19,7 +18,7 @@ class FlipCoin(game_template.Template):
     """
     Flip a coin, bet on what side it lands on
     """
-    
+
     multiplayer = True
     modName = "Flip a coin"
     aliases = ["CoinFlip"]
@@ -129,10 +128,9 @@ class FlipCoin(game_template.Template):
         self.Interaction = Interaction
 
         await Interaction.response.send_message("Loading game data...")
-        
+
         self.mp = Multiplayer(Interaction, "flip coin", 2)
         await self.mp.start(self.MultiCallback)
-        
 
 
 def game_setup(bot):
