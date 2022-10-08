@@ -3,6 +3,7 @@ import os
 import random
 import typing
 from datetime import datetime
+from datetime import timedelta
 
 import aenum
 import discord
@@ -27,11 +28,14 @@ class Effect:
         """
         Helper function to activate an effect (by add expire and optionally restrict it to a game)
         """
-        self.expire_time = datetime.now() + datetime.timedelta(minutes=10)
+        self.expire_time = datetime.now() + timedelta(minutes=10)
         self.game_name = game_name
 
+    def __hash__(self) -> int:
+        return hash(self.effect_name)
+
     @classmethod
-    def coin_multiplier(cls, coin_multiplier: float):
+    def coin_multiplier_cls(cls, coin_multiplier: float):
         """
         Create a coin multiplier effect
         """
@@ -101,7 +105,15 @@ class Player_Status:
             return await cls.initialize_new_user(user_id)
         except json.JSONDecodeError:
             return await cls.initialize_new_user(user_id)
+        count = 0
+        for effect in data["effects"]:
 
+            for kwarg, value in effect.items():
+                if kwarg == "expire_time":
+                    data["effects"][count]["expire_time"] = datetime.fromtimestamp(
+                        value
+                    )
+            count += 1
         try:
             return cls(
                 discord.utils.get(bot.users, id=user_id),
@@ -115,7 +127,7 @@ class Player_Status:
                 data["loses"],
                 data["additional_data"],
                 Inventory([Effect(**item) for item in data["inventory"]]),
-                [Effect(**effect) for effect in data["effects"]],
+                [Effect(**kwargs) for kwargs in data["effects"]],
             )
         except KeyError:
             # Can we make this so it attempts to fix data instead of reseting data?
@@ -172,7 +184,7 @@ class Player_Status:
             "additional_data": self.additional_data,
             "inventory": self.inventory.to_dict,
             "debt": self.debt,
-            "effects": [effect.__dict__ for effect in self.effects],
+            "effects": [effect.to_dict for effect in self.effects],
         }
 
     def __setattr__(self, __name: str, __value: typing.Any) -> None:

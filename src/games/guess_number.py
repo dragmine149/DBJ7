@@ -44,7 +44,36 @@ class GuessNumber(game_template.Template):
             await self.interaction.edit_original_response(
                 content=f"You won! You got the number right!\nPrize: {self.bet +(self.bet * self.mapped[self.range])}"
             )
-            self.account.money += self.bet + (self.bet * self.mapped[self.range])  # type: ignore
+            try:
+                if "coin_multiplier" in [
+                    x.effect_name
+                    for x in self.account.effects
+                    if x.effect_name == "coin_multiplier"
+                ] and (
+                    not [
+                        x
+                        for x in self.account.effects
+                        if x.effect_name == "coin_multiplier"
+                    ][0].game_name
+                    or [
+                        x
+                        for x in self.account.effects
+                        if x.effect_name == "coin_multiplier"
+                    ][0].game_name.lower()
+                    == "guess_number"
+                ):
+                    selected = None
+                    for effect in self.account.effects:
+                        if effect.effect_name == "coin_multiplier":
+                            selected = effect
+                            break
+                    self.account.money += (
+                        self.bet
+                        + (self.bet * self.mapped[self.range])
+                        + (self.bet * selected.coin_multiplier)
+                    )
+            except Exception:
+                self.account.money += self.bet + (self.bet * self.mapped[self.range])
         elif self.number > self.answer:
             await self.interaction.edit_original_response(
                 content=f"Your answer was too low\nThe number was {self.number}\nPrize: -{self.bet +(self.bet * self.mapped[self.range])}"

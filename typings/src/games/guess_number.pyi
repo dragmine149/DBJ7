@@ -1,7 +1,12 @@
 import discord
 from _typeshed import Incomplete
 from discord.ext import commands as commands
-from src.utils import MoneySelector as MoneySelector, bank as bank, game_template as game_template, uis as uis
+from src.utils import (
+    MoneySelector as MoneySelector,
+    bank as bank,
+    game_template as game_template,
+    uis as uis,
+)
 
 class GuessNumber(game_template.Template):
     bot: Incomplete

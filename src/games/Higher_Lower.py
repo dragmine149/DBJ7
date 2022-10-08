@@ -63,7 +63,25 @@ class HigherOrLower(game_template.Template):
         """
         Finish looping through all cards, show end response
         """
-        moneyMultiplier = 0.025 * self.correct
+        bonus = 0
+        if "coin_multiplier" in [
+            x.effect_name
+            for x in self.account.effects
+            if x.effect_name == "coin_multiplier"
+        ] and (
+            not [x for x in self.account.effects if x.effect_name == "coin_multiplier"][
+                0
+            ].game_name
+            or [x for x in self.account.effects if x.effect_name == "coin_multiplier"][
+                0
+            ].game_name.lower()
+            == "higher_lower"
+        ):
+            for effect in self.account.effects:
+                if effect.effect_name == "coin_multiplier":
+                    break
+            bonus = effect.coin_multiplier
+        moneyMultiplier = (0.025 * self.correct) + bonus
         moneyReward = self.betValue * moneyMultiplier
 
         self.account.money += moneyReward

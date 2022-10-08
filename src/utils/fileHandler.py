@@ -22,9 +22,7 @@ class FileHandler:
         if isinstance(data["user"], (discord.User, discord.Member, discord.Object)):
             data["user"] = data["user"].id
         async with aiofiles.open(f"Data/{name}", "wb") as f:
-            data = json.dumps(data)  # type: ignore
-            if isinstance(data, str):
-                data = data.encode()  # orjson
+            data = json.dumps(data, option=json.OPT_INDENT_2)  # type: ignore
             await f.write(data)
 
     async def ReadFile(self, name: str) -> dict:

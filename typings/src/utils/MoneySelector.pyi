@@ -10,7 +10,12 @@ class MoneySelector:
     value: int
     view: Incomplete
     fsSent: bool
-    def __init__(self, Interaction: discord.Interaction, callback: Incomplete | None = ..., userOnly: bool = ...) -> None: ...
+    def __init__(
+        self,
+        Interaction: discord.Interaction,
+        callback: Incomplete | None = ...,
+        userOnly: bool = ...,
+    ) -> None: ...
     async def confirmCallback(self, Interaction: discord.Interaction, label: str): ...
     async def defaultCallBack(self, value, user) -> None: ...
     betMsg: Incomplete

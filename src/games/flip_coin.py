@@ -48,7 +48,19 @@ class FlipCoin(game_template.Template):
         Args:
             unlucky (float): The unlucky percent of the user, this has to be a decimal number.
         """
-        if Items.lucky_potion in self.account.effects:
+        if "lucky_potion" in [
+            x.effect_name
+            for x in self.account.effects
+            if x.effect_name == "lucky_potion"
+        ] and (
+            not [x for x in self.account.effects if x.effect_name == "coin_multiplier"][
+                0
+            ].game_name
+            or [x for x in self.account.effects if x.effect_name == "coin_multiplier"][
+                0
+            ].game_name.lower()
+            == "flip_coin"
+        ):
             unlucky -= (
                 self.account.effects[
                     self.account.effects.index(Items.lucky_potion)
@@ -88,10 +100,27 @@ class FlipCoin(game_template.Template):
         await Interaction.response.send_message("Flipping...", ephemeral=True)
         await asyncio.sleep(1.5)
         if result:
-            if Items.coin_multiplier in self.account.effects:
-                coins *= self.account.effects[
-                    self.account.effects.index(Items.coin_multiplier)
-                ].coin_multiplier
+            if "coin_multiplier" in [
+                x.effect_name
+                for x in self.account.effects
+                if x.effect_name == "coin_multiplier"
+            ] and (
+                not [
+                    x
+                    for x in self.account.effects
+                    if x.effect_name == "coin_multiplier"
+                ][0].game_name
+                or [
+                    x
+                    for x in self.account.effects
+                    if x.effect_name == "coin_multiplier"
+                ][0].game_name.lower()
+                == "flip_coin"
+            ):
+                for effect in self.account.effects:
+                    if effect.effect_name == "coin_multiplier":
+                        break
+                coins *= effect.coin_multiplier
             await self.Interaction.edit_original_response(
                 content=f"It landed on {label}! You gained {coins} coins", view=None
             )

@@ -165,7 +165,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         )
         return False
 
-    @app_commands.command()
+    @commands.hybrid_command()
     async def playgame(
         self, Interaction: discord.Interaction, game: typing.Optional[str]
     ):

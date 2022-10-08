@@ -23,7 +23,15 @@ class Effect:
     def wipe_effect(cls): ...
     @property
     def to_dict(self): ...
-    def __init__(self, effect_name, effect_lucky_multiplier, effect_unlucky_multiplier, coin_multiplier, expire_time, game_name) -> None: ...
+    def __init__(
+        self,
+        effect_name,
+        effect_lucky_multiplier,
+        effect_unlucky_multiplier,
+        coin_multiplier,
+        expire_time,
+        game_name,
+    ) -> None: ...
 
 class Inventory:
     items: typing.List[Effect]
@@ -52,4 +60,16 @@ class Player_Status:
     def to_dict(self): ...
     def __setattr__(self, __name: str, __value: typing.Any) -> None: ...
     async def save(self) -> None: ...
-    def __init__(self, user, money, debt, unlucky, last_paid_debt, wins, loses, additional_data, inventory, effects) -> None: ...
+    def __init__(
+        self,
+        user,
+        money,
+        debt,
+        unlucky,
+        last_paid_debt,
+        wins,
+        loses,
+        additional_data,
+        inventory,
+        effects,
+    ) -> None: ...
