@@ -72,7 +72,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             if (
                 type(game).__name__ == self.chosenGame
                 or self.chosenGame in game.aliases
-                or self.chosenGame == game.modName
+                or self.chosenGame == getattr(game, "modName", None)
             ):
                 try:
                     await game.start(Interaction)
