@@ -12,6 +12,7 @@ class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
     """
     Inventory and shop group commands
     """
+
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.check_effects.start()
@@ -19,7 +20,8 @@ class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
 
     @property
     def display_emoji(self):
-        return "🛒"    
+        return "🛒"
+
     @tasks.loop(minutes=1)
     async def check_effects(self):
         """
@@ -64,7 +66,11 @@ class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
             )
         if amount > 100:
             await ctx.reply(
-                embed=discord.Embed(title="Warning", description="You can't buy more than 100 items at once. Fallback to 100 items", color=discord.Color.red())
+                embed=discord.Embed(
+                    title="Warning",
+                    description="You can't buy more than 100 items at once. Fallback to 100 items",
+                    color=discord.Color.red(),
+                )
             )
             amount = 100
         account.money -= money
