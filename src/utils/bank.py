@@ -1,3 +1,4 @@
+from cmath import log
 import dataclasses
 import logging
 import os
@@ -128,6 +129,11 @@ class Player_Status:
             # It probably shouldn't happen a lot but just in case, would be nice if we can fix before we reset.
             # I don't know, can we though?
             logger.error("Data file structure changed! Resetting data!!")
+            logger.info(traceback.format_exc())
+            return await cls.initialize_new_user(user_id)
+        except TypeError:
+            # Going to assume that the data is broken, so once again remaking it.
+            logger.error("Type error in returning data strucutre")
             logger.info(traceback.format_exc())
             return await cls.initialize_new_user(user_id)
 
