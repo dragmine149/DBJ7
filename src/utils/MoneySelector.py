@@ -127,6 +127,7 @@ class MoneySelector:
                 },
             ]
         )
+        self.fsSent: bool = False
 
     async def confirmCallback(self, Interaction: discord.Interaction, label: str):
         if Interaction.user.id != self.owner.id:
@@ -137,6 +138,7 @@ class MoneySelector:
 
         if label == "yes":
             await self.betMsg.delete_original_response()
+            await self.Interaction.delete_original_response()
             return await self.callback(self.value, self.Interaction.user)
 
         await Interaction.response.send_message(
@@ -213,12 +215,13 @@ class MoneySelector:
                 content=f"How much money do you want to bet? Currently betting: {self.value}coins\n\nYour limit: {self.account.money}coins",
                 view=self.view,
             )
-        else:
+        elif not self.fsSent:
             await self.Interaction.followup.send(
                 content=f"How much money do you want to bet? Currently betting: {self.value}coins\n\nYour limit: {self.account.money}coins",
                 view=self.view,
                 ephemeral=True,
             )
+            self.fsSent = True
 
     async def get_money(self):
         self.account = await bank.Player_Status.get_by_id(self.Interaction.user.id)

@@ -7,7 +7,6 @@ from discord.ext import commands
 
 from src.utils import bank, game_template, uis
 from src.utils.enums import Coin_State, Items
-from src.utils.MoneySelector import MoneySelector
 from src.utils.Multiplayer import Multiplayer
 
 logger = logging.getLogger("games.flip_coin.log")
@@ -50,7 +49,12 @@ class FlipCoin(game_template.Template):
             unlucky (float): The unlucky percent of the user, this has to be a decimal number.
         """
         if Items.lucky_potion in self.account.effects:
-            unlucky -= self.account.effects[self.account.effects.index(Items.lucky_potion)].effect_lucky_multiplier / 10
+            unlucky -= (
+                self.account.effects[
+                    self.account.effects.index(Items.lucky_potion)
+                ].effect_lucky_multiplier
+                / 10
+            )
             if unlucky < 0:
                 unlucky = 0
         if unlucky < 0.01:
@@ -83,7 +87,9 @@ class FlipCoin(game_template.Template):
         await asyncio.sleep(1.5)
         if result:
             if Items.coin_multiplier in self.account.effects:
-                coins *= self.account.effects[self.account.effects.index(Items.coin_multiplier)].coin_multiplier
+                coins *= self.account.effects[
+                    self.account.effects.index(Items.coin_multiplier)
+                ].coin_multiplier
             await self.Interaction.edit_original_response(
                 content=f"It landed on {label}! You gained {coins} coins", view=None
             )
@@ -100,10 +106,6 @@ class FlipCoin(game_template.Template):
             self.account.unlucky = 1
         else:
             self.account.unlucky += j  # type: ignore
-
-    async def money_callback(self, value: int, user):
-        self.betValue = value
-        await self.pre_game()
 
     async def pre_game(self):
         # Do this in another function, so that we don't skip over the money input, although is there a better way to do this?
@@ -125,8 +127,12 @@ class FlipCoin(game_template.Template):
         self.choosen = Coin_State(view.choosen.label.lower())
 
     async def MultiCallback(self, Interaction: discord.Interaction, data):
-        await MoneySelector(Interaction, self.money_callback).get_money()
-        await Interaction.followup.send(f"Retrieved {data} from multiplayer info")
+        await Interaction.followup.send(
+            f"Retrieved {data} from multiplayer info", ephemeral=True
+        )
+        if type(data) == int:
+            self.betValue = data
+            return await self.pre_game()
 
     async def start(self, Interaction: discord.Interaction):
         logger.info("Started flipping a coin")
