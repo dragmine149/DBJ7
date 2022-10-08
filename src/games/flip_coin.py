@@ -1,4 +1,5 @@
 import asyncio
+from code import interact
 import logging
 import random
 
@@ -8,6 +9,7 @@ from discord.ext import commands
 from src.utils import bank, game_template, uis
 from src.utils.enums import Coin_State
 from src.utils.MoneySelector import MoneySelector
+from src.utils.Multiplayer import Multiplayer
 
 logger = logging.getLogger("games.flip_coin.log")
 logger.info("Initalized")
@@ -17,6 +19,10 @@ class FlipCoin(game_template.Template):
     """
     Flip a coin, bet on what side it lands on
     """
+    
+    multiplayer = True
+    modName = "Flip a coin"
+    aliases = ["CoinFlip"]
 
     def __init__(self, bot: commands.cog) -> None:
         """_summary_
@@ -85,10 +91,10 @@ class FlipCoin(game_template.Template):
             )
             self.account.money -= coins
         j = random.choice([0.1, 0.2, 0.3, 0.4, 0.5, 0.01, 0.02, 0.03, 0.04, 0.05])
-        if (j + self.account.unlucky) > 1:
+        if (j + self.account.unlucky) > 1:  # type: ignore
             self.account.unlucky = 1
         else:
-            self.account.unlucky += j
+            self.account.unlucky += j  # type: ignore
 
     async def money_callback(self, value: int, user):
         self.betValue = value
@@ -113,12 +119,20 @@ class FlipCoin(game_template.Template):
         await view.wait()
         self.choosen = Coin_State(view.choosen.label.lower())
 
+    async def MultiCallback(self, Interaction: discord.Interaction, data):
+        await MoneySelector(Interaction, self.money_callback).get_money()
+        await Interaction.followup.send(f"Retrieved {data} from multiplayer info")
+
     async def start(self, Interaction: discord.Interaction):
+        logger.info("Started flipping a coin")
         self.user = Interaction.user
         self.Interaction = Interaction
 
         await Interaction.response.send_message("Loading game data...")
-        await MoneySelector(Interaction, self.money_callback).get_money()
+        
+        self.mp = Multiplayer(Interaction, "flip coin", 2)
+        await self.mp.start(self.MultiCallback)
+        
 
 
 def game_setup(bot):
