@@ -4,14 +4,11 @@ import os
 import traceback
 import typing
 from datetime import datetime
-
+import random
 import discord
 from discord.ext import commands
 
-try:
-    import orjson as json
-except ImportError:
-    import json  # type: ignore
+import orjson as json
 
 
 from .fileHandler import FileHandler
@@ -41,93 +38,47 @@ class Inventory:
 @dataclasses.dataclass
 class Effect:
     effect_name: str
-    game_name: str
     effect_lucky_multiplier: float
     effect_unlucky_multiplier: float
-    global_effect_lucky_multiplier: float
-    global_effect_unlucky_multiplier: float
     coin_multiplier: float
-    global_coin_multiplier: float
-    expire_time: datetime
-
-    @property
-    def to_dict(self) -> dict[str, typing.Union[float, int, str]]:
-        return {
-            "effect_name": self.effect_name,
-            "effect_lucky_multiplier": self.effect_lucky_multiplier,
-            "effect_unlucky_multiplier": self.effect_unlucky_multiplier,
-            "global_effect_lucky_multiplier": self.global_effect_lucky_multiplier,
-            "global_effect_unlucky_multiplier": self.global_effect_unlucky_multiplier,
-            "coin_multiplier": self.coin_multiplier,
-            "global_coin_multiplier": self.global_coin_multiplier,
-            "expire_time": self.expire_time.timestamp(),
-            "game_name": self.game_name,
-        }
-
+    expire_time: datetime = None
+    game_name: str = None
+    
+    def activate(self, game_name=None):
+        """
+        Helper function to activate an effect (by add expire and optionally restrict it to a game)
+        """
+        self.expire_time = datetime.now() + datetime.timedelta(minutes=10)
+        self.game_name = game_name
+    
     @classmethod
-    def build_effect(
-        cls,
-        effect_name: str,
-        game_name: str,
-        effect_lucky_multiplier: float,
-        effect_unlucky_multiplier: float,
-        global_effect_lucky_multiplier: float,
-        global_effect_unlucky_multiplier: float,
-        coin_multiplier: float,
-        global_coin_multiplier: float,
-        expire_time: datetime,
-    ) -> "Effect":
-        return cls(
-            effect_name,
-            game_name,
-            effect_lucky_multiplier,
-            effect_unlucky_multiplier,
-            global_effect_lucky_multiplier,
-            global_effect_unlucky_multiplier,
-            coin_multiplier,
-            global_coin_multiplier,
-            expire_time,
-        )
-
+    def coin_multiplier(cls, coin_multiplier: float):
+        """
+        Create a coin multiplier effect
+        """
+        return cls("coin multiplier", 1, 1, coin_multiplier)
+    
     @classmethod
-    def coin_booster(
-        cls,
-        game_name: str,
-        coin_multiplier: float,
-        global_coin_multiplier: float,
-        expire_time: datetime,
-    ) -> "Effect":
-        return cls.build_effect(
-            "Coin Booster",
-            game_name,
-            1,
-            1,
-            1,
-            1,
-            coin_multiplier,
-            global_coin_multiplier,
-            expire_time,
-        )
-
+    def lucky_potion(cls):
+        """
+        Create a lucky potion effect
+        """
+        return cls("lucky potion", random.randint(2,4), 1, 1)
+    
     @classmethod
-    def lucky_potion(
-        cls,
-        game_name: str,
-        effect_lucky_multiplier: float,
-        global_effect_lucky_multiplier: float,
-        expire_time: datetime,
-    ) -> "Effect":
-        return cls.build_effect(
-            "Lucky Potion",
-            game_name,
-            effect_lucky_multiplier,
-            1,
-            global_effect_lucky_multiplier,
-            1,
-            1,
-            1,
-            expire_time,
-        )
+    def fake_lucky_potion(cls):
+        """
+        Create a fake lucky potion effect
+        """
+        return cls("fake lucky potion", 1, random.randint(1,3), 1)
+    
+    @classmethod
+    def wipe_effect(cls):
+        """
+        Create a wipe effect
+        """
+        return cls("wipe", 1, 1, 1)
+    
 
 
 @dataclasses.dataclass

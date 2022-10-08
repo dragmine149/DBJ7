@@ -1,6 +1,10 @@
 import aenum
-
-
+from .bank import Effect
+class Items(aenum.Enum):
+    _init_ = "value __doc__ __name__"
+    coin_multiplier = Effect.coin_booster(
+        None
+    )
 class Coin_State(aenum.MultiValueEnum):
     heads = 1, "heads"
     tails = 0, "tails"
