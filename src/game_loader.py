@@ -160,11 +160,15 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
                     f"{orGameName} has no attribute `aliases` please refer to src.games.README.md for more information"
                 )
 
-        await Interaction.response.send_message("Game not found in currently loaded games...")
+        await Interaction.response.send_message(
+            "Game not found in currently loaded games..."
+        )
         return False
 
     @app_commands.command()
-    async def playgame(self, Interaction: discord.Interaction, game: typing.Optional[str]):
+    async def playgame(
+        self, Interaction: discord.Interaction, game: typing.Optional[str]
+    ):
         """
         Choose a game to gamble coins on!
 
@@ -180,13 +184,13 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         ):
             return await Interaction.response.send_message(
                 "You're prohibited to play any games since you have debts and you didn't paid any for a week straight. Go pay your debt to play the game!",
-                ephemeral=True
+                ephemeral=True,
             )
         # Check for unlucky being 1 (impossible)
         if self.account.unlucky == 1:
             return await Interaction.response.send_message(
                 "Oh oh! Seems likes you can't win any games. Come back in a while, you might be more lucky then.",
-                ephemeral=True
+                ephemeral=True,
             )
 
         # Process the inputted game
