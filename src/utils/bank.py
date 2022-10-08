@@ -6,18 +6,16 @@ import traceback
 import typing
 from datetime import datetime
 
+import aenum
 import discord
 import orjson as json
 from discord.ext import commands
-import aenum
+
 from .fileHandler import FileHandler
 
 logger = logging.getLogger("bot.src.utils.bank")
 
 bot: typing.Optional[commands.Bot] = None
-
-
-
 
 
 @dataclasses.dataclass
@@ -56,7 +54,7 @@ class Effect:
         Create a wipe effect
         """
         return cls("wipe", 1, 1, 1)
-    
+
     @property
     def to_dict(self):
         return {
@@ -65,8 +63,9 @@ class Effect:
             "effect_unlucky_multiplier": self.effect_unlucky_multiplier,
             "coin_multiplier": self.coin_multiplier,
             "expire_time": self.expire_time.timestamp() if self.expire_time else None,
-            "game_name": self.game_name
+            "game_name": self.game_name,
         }
+
 
 @dataclasses.dataclass
 class Inventory:
@@ -75,6 +74,7 @@ class Inventory:
     @property
     def to_dict(self) -> list[Effect]:
         return self.items
+
 
 @dataclasses.dataclass
 class Player_Status:
@@ -193,7 +193,7 @@ class Player_Status:
         data = self.to_dict
         copied = data.copy()
         for item in copied["inventory"]:
-            if isinstance(item,dict):
+            if isinstance(item, dict):
                 continue
             if isinstance(item, aenum.Enum):
                 data["inventory"].remove(item)

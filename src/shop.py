@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 import discord
@@ -5,14 +6,13 @@ from discord.ext import commands, tasks
 
 from .utils import bank
 from .utils.enums import Items
-import logging
 
 
 class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.check_effects.start()
-        self.log= logging.getLogger("bot.Inventory_And_Shop")
+        self.log = logging.getLogger("bot.Inventory_And_Shop")
 
     @tasks.loop(minutes=1)
     async def check_effects(self):
@@ -53,7 +53,7 @@ class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
                 embed=discord.Embed(
                     title="Error",
                     description=f"You don't have enough coins to buy this item\nExpected: {money} coins\nActual: {account.money} coins",
-                    color=discord.Color.red()
+                    color=discord.Color.red(),
                 )
             )
         account.money -= money
@@ -63,19 +63,19 @@ class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
             embed=discord.Embed(
                 title="Success",
                 description=f"You have bought {amount} {item.name} for {money} coins",
-                color=discord.Color.green()
+                color=discord.Color.green(),
             )
         )
 
     @shop.command()
-    async def sell(self,ctx: commands.Context, item: Items, amount:int = 1):
+    async def sell(self, ctx: commands.Context, item: Items, amount: int = 1):
         account = await bank.Player_Status.get_by_id(ctx.author.id)
         if item.value not in account.inventory.items:
             return await ctx.reply(
                 embed=discord.Embed(
                     title="Error",
                     description=f"You don't have this item in your inventory",
-                    color=discord.Color.red()
+                    color=discord.Color.red(),
                 )
             )
         if amount > account.inventory.items.count(item.value):
@@ -83,7 +83,7 @@ class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
                 embed=discord.Embed(
                     title="Error",
                     description=f"You don't have enough of this item in your inventory",
-                    color=discord.Color.red()
+                    color=discord.Color.red(),
                 )
             )
         account.money += (amount * item.__price__) * 0.75
@@ -91,9 +91,10 @@ class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
             embed=discord.Embed(
                 title="Success",
                 description=f"You have sold {amount} {item.name} for {amount * item.__price__ * 0.75} coins",
-                color=discord.Color.green()
+                color=discord.Color.green(),
             )
         )
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Inventory_And_Shop(bot))
