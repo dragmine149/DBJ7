@@ -4,12 +4,12 @@ from .bank import Effect
 
 
 class Items(aenum.Enum):
-    _init_ = "value __doc__ __name__ __price__"
+    _init_ = "value __callme__ __doc__ __price__"
     _order_ = "coin_multiplier wipe_effect lucky_potion"
     coin_multiplier = (
+        "coin multiplier",
         Effect.coin_multiplier(2),
         "Double your coins for 10 minutes",
-        "coin multiplier",
         2000,
     )
     wipe_effect = Effect.wipe_effect(), "Wipe any effect you have", "wipe effect", 100

@@ -82,7 +82,7 @@ class Error_Handling(commands.Cog):
             await ctx.send(
                 embed=discord.Embed(
                     title="Bad argument",
-                    description=f"{error.param.name} is not a valid.\n```py\nBadArgument: {str(error)}\n```",
+                    description=f"{error} is not a valid.\n```py\nBadArgument: {str(error)}\n```",
                     color=discord.Color.red(),
                 )
             )

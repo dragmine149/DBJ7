@@ -217,7 +217,6 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             gameOptions.append(
                 discord.SelectOption(label=gameName, description=desc, emoji=emoji)
             )
-            print(gameOptions)
         view = uis.DropdownView(
             callback=self.game_preLoad,
             placeholder="Select game to play",

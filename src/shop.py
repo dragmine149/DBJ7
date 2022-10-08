@@ -9,11 +9,17 @@ from .utils.enums import Items
 
 
 class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
+    """
+    Inventory and shop group commands
+    """
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.check_effects.start()
         self.log = logging.getLogger("bot.Inventory_And_Shop")
 
+    @property
+    def display_emoji(self):
+        return "🛒"    
     @tasks.loop(minutes=1)
     async def check_effects(self):
         """
@@ -56,9 +62,13 @@ class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
                     color=discord.Color.red(),
                 )
             )
+        if amount > 100:
+            await ctx.reply(
+                embed=discord.Embed(title="Warning", description="You can't buy more than 100 items at once. Fallback to 100 items", color=discord.Color.red())
+            )
+            amount = 100
         account.money -= money
-        for _ in range(amount):  # type: ignore
-            account.inventory.items.append(item.value)
+        account.inventory.items.extend([item.value for x in range(amount)])
         await ctx.reply(
             embed=discord.Embed(
                 title="Success",
@@ -156,19 +166,19 @@ class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
         if item.value in account.effects:
             effect = None
             for _effect in account.effects:
-                if _effect.value == item.value:
+                if _effect == item.value:
                     effect = _effect.value
                     break
             if effect.game_name == game_name:
                 effect.expire_time = effect.expire_time + datetime.timedelta(minutes=10)
             else:
                 account.effects.append(item.value)
-                item.value.activate(game_name)
+                item.__callme__.activate(game_name)
         elif item == Items.wipe_effect:
             account.unlucky = 0
         else:
             account.effects.append(item.value)
-            item.value.activate(game_name)
+            item.__callme__.activate(game_name)
         await ctx.reply(
             embed=discord.Embed(
                 title="Success",

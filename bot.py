@@ -115,6 +115,9 @@ async def on_disconnect():
 async def on_connect():
     log.info("Bot connected!")
 
+@bot.event
+async def on_message(message: discord.Message):
+    pass # mute message command
 
 def handler(x, y):
     observer.stop()
