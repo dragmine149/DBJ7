@@ -1,7 +1,11 @@
 import discord
 from _typeshed import Incomplete
 from discord.ext import commands as commands
-from src.utils import MoneySelector as MoneySelector, bank as bank, game_template as game_template, uis as uis
+
+from src.utils import MoneySelector as MoneySelector
+from src.utils import bank as bank
+from src.utils import game_template as game_template
+from src.utils import uis as uis
 
 class Dictionary:
     prompt: str
