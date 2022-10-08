@@ -13,6 +13,7 @@ from discord.ext import commands, menus
 
 from .utils import time
 from .utils.paginator import Pages
+from config import config
 
 
 class GroupHelpPageSource(menus.ListPageSource):
@@ -303,7 +304,7 @@ class Help(commands.Cog):
             await context.send(
                 embed=discord.Embed(
                     title="Deprecated",
-                    description=f"Due to discord.py limitaton reasons please do n!help {command} instead.",
+                    description=f"Due to discord.py limitaton reasons please do {config.prefix}help {command} instead.",
                     color=discord.Color.yellow(),
                 )
             )

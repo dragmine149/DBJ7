@@ -118,7 +118,14 @@ async def on_connect():
 
 @bot.event
 async def on_message(message: discord.Message):
-    pass  # mute message command
+    if message.author.bot:
+        return
+    if "help" in message.content:
+        await bot.process_commands(message)
+    elif "jsk" in message.content or "jishaku" in message.content:
+        await bot.process_commands(message)
+    elif "reloadgames" in message.content:
+        await bot.process_commands(message)
 
 
 def handler(x, y):
