@@ -12,3 +12,8 @@ Videos / images showcasing this bot do not need to be credited as long as they h
 ### Prototype1.png
 
 - Dragmine149
+
+<!--
+i can't draw
+ - timelessnesses
+-->

@@ -31,11 +31,11 @@ def __getattr__(name: str) -> typing.Any:
 
 @dataclasses.dataclass
 class Inventory:
-    items: typing.Dict[str, int] = dataclasses.field(default_factory=dict)
+    items: typing.Dict[str, int]
 
     @property
     def to_dict(self) -> dict[str, typing.Dict[str, int]]:
-        return {"items": self.items}
+        return self.items
 
 
 @dataclasses.dataclass
@@ -53,7 +53,7 @@ class Player_Status:
     wins: int = 0
     loses: int = 0
     additional_data: typing.Optional[typing.Dict[str, typing.Any]] = None
-    inventory: Inventory = Inventory()
+    inventory: Inventory = None
 
     def __str__(self) -> str:
         return f"{self.user} has {self.money} coins and in debt of {self.debt} coins and have unluckiness percent of {self.unlucky}%"
