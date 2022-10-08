@@ -126,8 +126,6 @@ class Player_Status:
             return await cls.initialize_new_user(user_id)
         except TypeError:
             # Going to assume that the data is broken, so once again remaking it.
-            logger.error("Type error in returning data strucutre")
-            logger.info(traceback.format_exc())
             return await cls.initialize_new_user(user_id)
 
     @classmethod
