@@ -63,6 +63,7 @@ class Effect:
         """
         return cls("wipe", 1, 1, 1)
 
+
 @dataclasses.dataclass
 class Player_Status:
     """
@@ -163,7 +164,7 @@ class Player_Status:
             "additional_data": self.additional_data,
             "inventory": self.inventory.to_dict,
             "debt": self.debt,
-            "effects": self.effects, # orjson deal this fine
+            "effects": self.effects,  # orjson deal this fine
         }
 
     def __setattr__(self, __name: str, __value: typing.Any) -> None:
