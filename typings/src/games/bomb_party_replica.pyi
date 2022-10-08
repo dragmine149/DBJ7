@@ -13,6 +13,7 @@ class Dictionary:
     def __init__(self, prompt, possible_words) -> None: ...
 
 class Bomb_Party(game_template.Template):
+    modName: str
     bot: Incomplete
     betting_value: int
     dictionary: Incomplete

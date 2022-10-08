@@ -69,7 +69,11 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
 
     async def game_select(self, Interaction: discord.Interaction):
         for game in self.games:
-            if type(game).__name__ == self.chosenGame or self.chosenGame in game.aliases or self.chosenGame == game.modName:
+            if (
+                type(game).__name__ == self.chosenGame
+                or self.chosenGame in game.aliases
+                or self.chosenGame == game.modName
+            ):
                 try:
                     await game.start(Interaction)
                 except AttributeError as e:

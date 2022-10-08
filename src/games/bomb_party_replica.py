@@ -39,7 +39,7 @@ class Dictionary:
 
 class Bomb_Party(game_template.Template):
     modName = "Bomb Party"
-    
+
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
         bank.bot = bot
