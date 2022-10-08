@@ -9,7 +9,7 @@ from datetime import datetime
 import discord
 import orjson as json
 from discord.ext import commands
-
+import aenum
 from .fileHandler import FileHandler
 
 logger = logging.getLogger("bot.src.utils.bank")
@@ -17,13 +17,7 @@ logger = logging.getLogger("bot.src.utils.bank")
 bot: typing.Optional[commands.Bot] = None
 
 
-@dataclasses.dataclass
-class Inventory:
-    items: typing.Dict[str, int]
 
-    @property
-    def to_dict(self) -> dict[str, typing.Dict[str, int]]:
-        return self.items
 
 
 @dataclasses.dataclass
@@ -62,7 +56,25 @@ class Effect:
         Create a wipe effect
         """
         return cls("wipe", 1, 1, 1)
+    
+    @property
+    def to_dict(self):
+        return {
+            "effect_name": self.effect_name,
+            "effect_lucky_multiplier": self.effect_lucky_multiplier,
+            "effect_unlucky_multiplier": self.effect_unlucky_multiplier,
+            "coin_multiplier": self.coin_multiplier,
+            "expire_time": self.expire_time.timestamp() if self.expire_time else None,
+            "game_name": self.game_name
+        }
 
+@dataclasses.dataclass
+class Inventory:
+    items: typing.List[Effect] = dataclasses.field(default_factory=list)
+
+    @property
+    def to_dict(self) -> list[Effect]:
+        return self.items
 
 @dataclasses.dataclass
 class Player_Status:
@@ -108,12 +120,13 @@ class Player_Status:
                 data["wins"],
                 data["loses"],
                 data["additional_data"],
-                Inventory(data["inventory"]),
+                Inventory([Effect(**item) for item in data["inventory"]]),
                 [Effect(**effect) for effect in data["effects"]],
             )
         except KeyError:
             # Can we make this so it attempts to fix data instead of reseting data?
             # It probably shouldn't happen a lot but just in case, would be nice if we can fix before we reset.
+            # I don't know, can we though?
             logger.error("Data file structure changed! Resetting data!!")
             logger.info(traceback.format_exc())
             return await cls.initialize_new_user(user_id)
@@ -129,7 +142,7 @@ class Player_Status:
             "wins": 0,
             "loses": 0,
             "additional_data": {},
-            "inventory": {},
+            "inventory": [],
             "effects": [],
         }
         await FileHandler().SaveFile(f"{user_id}.json", data)
@@ -142,7 +155,7 @@ class Player_Status:
             data["wins"],
             data["loses"],
             data["additional_data"],
-            Inventory(data["inventory"]),
+            Inventory([Effect(**effect) for effect in data["inventory"]]),
             [Effect(**effect) for effect in data["effects"]],
         )
 
@@ -164,7 +177,7 @@ class Player_Status:
             "additional_data": self.additional_data,
             "inventory": self.inventory.to_dict,
             "debt": self.debt,
-            "effects": self.effects,  # orjson deal this fine
+            "effects": [effect.__dict__ for effect in self.effects],
         }
 
     def __setattr__(self, __name: str, __value: typing.Any) -> None:
@@ -178,4 +191,13 @@ class Player_Status:
 
     async def save(self):
         data = self.to_dict
+        copied = data.copy()
+        for item in copied["inventory"]:
+            if isinstance(item,dict):
+                continue
+            if isinstance(item, aenum.Enum):
+                data["inventory"].remove(item)
+                data["inventory"].append(item.value.to_dict)
+            data["inventory"].remove(item)
+            data["inventory"].append(item.to_dict)
         await FileHandler().SaveFile(f"{self.user.id}.json", data)
