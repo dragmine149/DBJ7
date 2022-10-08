@@ -18,14 +18,6 @@ logger = logging.getLogger("bot.src.utils.bank")
 bot: typing.Optional[commands.Bot] = None
 
 
-def __getattr__(name: str) -> typing.Any:
-    if name == "bot":
-        if bot is None:
-            raise AttributeError("bot is not set")
-        return bot
-    return globals()[name]
-
-
 @dataclasses.dataclass
 class Inventory:
     items: typing.Dict[str, int]
@@ -66,29 +58,11 @@ class Effect:
         return cls("lucky potion", random.randint(2,4), 1, 1)
     
     @classmethod
-    def fake_lucky_potion(cls):
-        """
-        Create a fake lucky potion effect
-        """
-        return cls("fake lucky potion", 1, random.randint(1,3), 1)
-    
-    @classmethod
     def wipe_effect(cls):
         """
         Create a wipe effect
         """
         return cls("wipe", 1, 1, 1)
-    
-
-
-@dataclasses.dataclass
-class Effects:
-    effects: typing.List[Effect]
-
-    @property
-    def to_dict(self) -> dict[str, typing.Dict[str, int]]:
-        return self.effects
-
 
 @dataclasses.dataclass
 class Player_Status:
@@ -106,7 +80,7 @@ class Player_Status:
     loses: int = 0
     additional_data: typing.Optional[typing.Dict[str, typing.Any]] = None
     inventory: Inventory = None
-    effects: Effects = None
+    effects: typing.List[Effect] = dataclasses.field(default_factory=list)
 
     def __str__(self) -> str:
         return f"{self.user} has {self.money} coins and in debt of {self.debt} coins and have unluckiness percent of {self.unlucky}%"
@@ -135,7 +109,7 @@ class Player_Status:
                 data["loses"],
                 data["additional_data"],
                 Inventory(data["inventory"]),
-                Effects(data["effects"]),
+                [Effect(**effect) for effect in data["effects"]],
             )
         except KeyError:
             # Can we make this so it attempts to fix data instead of reseting data?
@@ -156,7 +130,7 @@ class Player_Status:
             "loses": 0,
             "additional_data": {},
             "inventory": {},
-            "effects": {},
+            "effects": [],
         }
         await FileHandler().SaveFile(f"{user_id}.json", data)
         return cls(
@@ -169,7 +143,7 @@ class Player_Status:
             data["loses"],
             data["additional_data"],
             Inventory(data["inventory"]),
-            Effects(data["effects"]),
+            [Effect(**effect) for effect in data["effects"]],
         )
 
     @staticmethod
@@ -190,6 +164,7 @@ class Player_Status:
             "additional_data": self.additional_data,
             "inventory": self.inventory.to_dict,
             "debt": self.debt,
+            "effects": self.effects, # orjson deal this fine
         }
 
     def __setattr__(self, __name: str, __value: typing.Any) -> None:
