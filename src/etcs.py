@@ -96,16 +96,21 @@ class Stuff(
         """
         Invite the bot to your server.
         """
+        view = uis.Multiple_Buttons(
+            [
+                {
+                    "label": "Invite me!",
+                    "url": f"https://discord.com/api/oauth2/authorize?client_id={self.bot.user.id}&permissions=8&scope=bot%20applications.commands",
+                    "style": discord.ButtonStyle.primary,
+                }
+            ]
+        )
         embed = discord.Embed(
             title="Invite",
             description="Invite the bot to your server!",
             color=discord.Color.green(),
         )
-        embed.add_field(
-            name="Invite link",
-            value=f"[Click here](https://discord.com/api/oauth2/authorize?client_id{self.bot.user.id}=&permissions=8&scope=bot%20applications.commands)",
-        )
-        await ctx.send(embed=embed)
+        await ctx.send(embed=embed, view=view)
 
     @commands.hybrid_command(name="raise", hidden=True)
     @commands.is_owner()
