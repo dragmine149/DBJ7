@@ -37,10 +37,11 @@ class Inventory:
     def to_dict(self) -> dict[str, typing.Dict[str, int]]:
         return self.items
 
+
 @dataclasses.dataclass
 class Effect:
     effect_name: str
-    game_name:str
+    game_name: str
     effect_lucky_multiplier: float
     effect_unlucky_multiplier: float
     global_effect_lucky_multiplier: float
@@ -48,9 +49,9 @@ class Effect:
     coin_multiplier: float
     global_coin_multiplier: float
     expire_time: datetime
-    
+
     @property
-    def to_dict(self) -> dict[str, typing.Union[float,int,str]]:
+    def to_dict(self) -> dict[str, typing.Union[float, int, str]]:
         return {
             "effect_name": self.effect_name,
             "effect_lucky_multiplier": self.effect_lucky_multiplier,
@@ -60,22 +61,74 @@ class Effect:
             "coin_multiplier": self.coin_multiplier,
             "global_coin_multiplier": self.global_coin_multiplier,
             "expire_time": self.expire_time.timestamp(),
-            "game_name": self.game_name
+            "game_name": self.game_name,
         }
-    
-    @classmethod
-    def build_effect(cls, effect_name: str, game_name: str, effect_lucky_multiplier: float, effect_unlucky_multiplier: float, global_effect_lucky_multiplier: float, global_effect_unlucky_multiplier: float, coin_multiplier: float, global_coin_multiplier: float, expire_time: datetime) -> "Effect":
-        return cls(effect_name, game_name, effect_lucky_multiplier, effect_unlucky_multiplier, global_effect_lucky_multiplier, global_effect_unlucky_multiplier, coin_multiplier, global_coin_multiplier, expire_time)
-    
-    @classmethod
-    def coin_booster(cls, game_name: str, coin_multiplier: float, global_coin_multiplier: float, expire_time: datetime) -> "Effect":
-        return cls.build_effect("Coin Booster", game_name, 1, 1, 1, 1, coin_multiplier, global_coin_multiplier, expire_time)
-    
-    @classmethod
-    def lucky_potion(cls, game_name: str, effect_lucky_multiplier: float, global_effect_lucky_multiplier: float, expire_time: datetime) -> "Effect":
-        return cls.build_effect("Lucky Potion", game_name, effect_lucky_multiplier, 1, global_effect_lucky_multiplier, 1, 1, 1, expire_time)
 
-    
+    @classmethod
+    def build_effect(
+        cls,
+        effect_name: str,
+        game_name: str,
+        effect_lucky_multiplier: float,
+        effect_unlucky_multiplier: float,
+        global_effect_lucky_multiplier: float,
+        global_effect_unlucky_multiplier: float,
+        coin_multiplier: float,
+        global_coin_multiplier: float,
+        expire_time: datetime,
+    ) -> "Effect":
+        return cls(
+            effect_name,
+            game_name,
+            effect_lucky_multiplier,
+            effect_unlucky_multiplier,
+            global_effect_lucky_multiplier,
+            global_effect_unlucky_multiplier,
+            coin_multiplier,
+            global_coin_multiplier,
+            expire_time,
+        )
+
+    @classmethod
+    def coin_booster(
+        cls,
+        game_name: str,
+        coin_multiplier: float,
+        global_coin_multiplier: float,
+        expire_time: datetime,
+    ) -> "Effect":
+        return cls.build_effect(
+            "Coin Booster",
+            game_name,
+            1,
+            1,
+            1,
+            1,
+            coin_multiplier,
+            global_coin_multiplier,
+            expire_time,
+        )
+
+    @classmethod
+    def lucky_potion(
+        cls,
+        game_name: str,
+        effect_lucky_multiplier: float,
+        global_effect_lucky_multiplier: float,
+        expire_time: datetime,
+    ) -> "Effect":
+        return cls.build_effect(
+            "Lucky Potion",
+            game_name,
+            effect_lucky_multiplier,
+            1,
+            global_effect_lucky_multiplier,
+            1,
+            1,
+            1,
+            expire_time,
+        )
+
 
 @dataclasses.dataclass
 class Effects:
@@ -84,6 +137,7 @@ class Effects:
     @property
     def to_dict(self) -> dict[str, typing.Dict[str, int]]:
         return self.effects
+
 
 @dataclasses.dataclass
 class Player_Status:
@@ -151,7 +205,7 @@ class Player_Status:
             "loses": 0,
             "additional_data": {},
             "inventory": {},
-            "effects": {}
+            "effects": {},
         }
         await FileHandler().SaveFile(f"{user_id}.json", data)
         return cls(
