@@ -5,7 +5,7 @@ from .bank import Effect
 
 class Items(aenum.Enum):
     _init_ = "value __doc__ __name__ __price__"
-    _order_ = 'coin_multiplier wipe_effect lucky_potion'
+    _order_ = "coin_multiplier wipe_effect lucky_potion"
     coin_multiplier = (
         Effect.coin_multiplier(2),
         "Double your coins for 10 minutes",
@@ -19,7 +19,7 @@ class Items(aenum.Enum):
         "lucky potion",
         10000,
     )
-    
+
     def __str__(self):
         return self.name
 
@@ -30,4 +30,3 @@ class Coin_State(aenum.MultiValueEnum):
 
     def __str__(self):
         return self.name
-
