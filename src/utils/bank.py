@@ -1,6 +1,7 @@
 import dataclasses
 import logging
 import os
+import traceback
 import typing
 from datetime import datetime
 
@@ -68,19 +69,26 @@ class Player_Status:
             logger.error(f"json data saved incorrectly! Resting user {user_id} data!")
             return await cls.initialize_new_user(user_id)
 
-        return cls(
-            discord.utils.get(bot.users, id=user_id),
-            data["money"],
-            data["debt"],
-            data["unlucky"],
-            datetime.fromtimestamp(data["last_paid_debt"])
-            if data["last_paid_debt"]
-            else None,
-            data["wins"],
-            data["loses"],
-            data["additional_data"],
-            Inventory(data["inventory"]),
-        )
+        try:
+            return cls(
+                discord.utils.get(bot.users, id=user_id),
+                data["money"],
+                data["debt"],
+                data["unlucky"],
+                datetime.fromtimestamp(data["last_paid_debt"])
+                if data["last_paid_debt"]
+                else None,
+                data["wins"],
+                data["loses"],
+                data["additional_data"],
+                Inventory(data["inventory"]),
+            )
+        except KeyError:
+            # Can we make this so it attempts to fix data instead of reseting data?
+            # It probably shouldn't happen a lot but just in case, would be nice if we can fix before we reset.
+            logger.error("Data file structure changed! Resetting data!!")
+            logger.info(traceback.format_exc())
+            return await cls.initialize_new_user(user_id)
 
     @classmethod
     async def initialize_new_user(cls, user_id: int) -> "Player_Status":
