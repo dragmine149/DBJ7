@@ -14,20 +14,17 @@ A nice class for building information about effect that you want.
 
 ```py
 from .utils import bank
-bank.Effect.build_effect(
-    effect_name: str,
-    game_name: str
-    effect_lucky_multiplier: float,
-    effect_unlucky_multiplier: float,
-    global_effect_lucky_multiplier: float,
-    global_effect_unlucky_multiplier: float,
-    coin_multiplier: float,
-    global_coin_multiplier: float,
-    expire_time: datetime
+bank.Effect(
+    effect_name: str
+    effect_lucky_multiplier: float
+    effect_unlucky_multiplier: float
+    coin_multiplier: float
+    expire_time: datetime = None
+    game_name: str = None
 )
 ```
 
-Game name is for specific game so you can know if effect activated for this game or not and if game name exists game must use `effect_` prefix to access the unlucky/lucky for that game and `coin_multiplier` is also local for that game name too
+The multiplier will be globally IF game name isn't set else it will be locally for that game. And if you want to add items in the shop please do so in `src/utils/enums.py` Items enumeration.
 
 I already have some preset for this! Don't worry!
 
@@ -53,4 +50,13 @@ account.unlucky += 0.2 # unlucky is in form of 0-1 decimal point
 new_account = await bank.Player_Status.intialize_new_user(user.id) # fresh new account reset everything
 if not member.id in await bank.Player_Status.get_users():
     await bank.Player_Status.intialize_new_user(user.id) # useful in intialize new user's data
+
+new_freshly_effect = bank.Effect(
+    effect_name="Deez nut effect",
+    effect_lucky_multiplier=2
+    effect_unlucky_multiplier=1 # 1 for making it nothing changes
+    coin_multiplier=69+420
+)
+new_freshly_effect.activate(game_name=None) # wOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO # also activate with game name not none result in these effect be locally to that game name :oyes:
+
 ```
