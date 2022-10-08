@@ -7,8 +7,7 @@ from discord.ext import commands
 
 from config import config
 
-from .utils import time
-from .utils import uis
+from .utils import time, uis
 
 
 class Stuff(
@@ -39,21 +38,21 @@ class Stuff(
 
         embed.add_field(name="Creator", value="<@890913140278181909>")
         embed.add_field(name="Creator", value="<@467718535897022479>")
-        
+
         ButtonView = uis.Multiple_Buttons(
             [
                 {
                     "label": "github.com",
                     "url": config.git_repo,
                     "style": discord.ButtonStyle.primary,
-                    "emoji": "<:github:1028382704292606085>"
+                    "emoji": "<:github:1028382704292606085>",
                 },
                 {
                     "label": "itch.io",
                     "url": "https://itch.io",
                     "style": discord.ButtonStyle.primary,
                     # No emoji for itch (Can't find one)
-                }
+                },
             ]
         )
 

@@ -1,4 +1,4 @@
-from .utils import time as time
+from .utils import time as time, uis as uis
 from _typeshed import Incomplete
 from discord.ext import commands
 

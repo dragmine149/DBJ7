@@ -6,7 +6,6 @@ import typing
 from datetime import datetime
 
 import discord
-from discord import app_commands
 from discord.ext import commands
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers.polling import PollingObserver
@@ -67,7 +66,6 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
 
         # Startup loding of games
         self.reload_games()
-
 
     async def game_select(self, Interaction: discord.Interaction):
         for game in self.games:

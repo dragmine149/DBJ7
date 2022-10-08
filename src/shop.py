@@ -42,13 +42,11 @@ class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
     @commands.hybrid_group()
     async def shop(self, ctx: commands.Context):
         """Shop commands"""
-    
+
     @shop.command()
     async def list(self, ctx: commands.Context):
-        """List all the items in the shop
-        """
-        embed = discord.Embed(
-                title="Shop", description="Buy an item from the shop")
+        """List all the items in the shop"""
+        embed = discord.Embed(title="Shop", description="Buy an item from the shop")
 
         for item in Items:
             embed.add_field(
