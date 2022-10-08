@@ -57,7 +57,7 @@ class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
                 )
             )
         account.money -= money
-        for _ in range(amount): # type: ignore
+        for _ in range(amount):  # type: ignore
             account.inventory.items.append(item.value)
         await ctx.reply(
             embed=discord.Embed(
@@ -116,11 +116,11 @@ class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
                 color=discord.Color.green(),
             )
         )
-    
+
     @commands.hybrid_group()
     async def inventory(self, ctx: commands.Context):
         """Inventory commands"""
-        
+
     @inventory.command()
     async def list(self, ctx: commands.Context):
         """List your inventory"""
@@ -139,7 +139,7 @@ class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
                 value=f"Amount: {count}\nDescription: {Items(item).__doc__}",
             )
         await ctx.send(embed=embed)
-    
+
     @inventory.command()
     async def use(self, ctx: commands.Context, item: Items):
         """Use an item"""
@@ -162,6 +162,7 @@ class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
                 color=discord.Color.green(),
             )
         )
+
     @inventory.command()
     async def effects(self, ctx: commands.Context):
         """List your effects"""
@@ -174,6 +175,7 @@ class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
                 value=f"Description: {Items(effect).__doc__}\nExpires in: {datetime.now() - effect.expire_time}",
             )
         await ctx.send(embed=embed)
-    
+
+
 async def setup(bot: commands.Bot):
     await bot.add_cog(Inventory_And_Shop(bot))
