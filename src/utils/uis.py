@@ -122,7 +122,7 @@ class DropdownView(ui.View):
             max_values (int, optional): Maxium amount of items the user can select. Defaults to 1.
             options (list, optional): The options to show in the ui. Defaults to [].
         """
-        super().__init__(timeout=0)
+        super().__init__(timeout=None)
         self.add_dropdown(callback, **kwargs)
 
     def add_dropdown(self, callback=None, **kwargs):
