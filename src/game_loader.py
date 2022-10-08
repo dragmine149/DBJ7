@@ -6,6 +6,7 @@ import typing
 from datetime import datetime
 
 import discord
+from discord import app_commands
 from discord.ext import commands
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers.polling import PollingObserver
@@ -43,7 +44,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         self.logger.info("initialized")
 
         self.chosenGame: str = ""
-        self.msg: discord.Message | None = None
+        self.msg: discord.Interaction | None
         bank.bot = bot
 
         observer = PollingObserver()
@@ -101,7 +102,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
     async def game_preLoad(self, Interaction: discord.Interaction, data: list[str]):
         self.chosenGame = data[0]  # type: ignore
         if self.msg is not None:
-            await self.msg.delete()  # delete dropdown message
+            await self.msg.delete_original_response()  # delete dropdown
             self.msg = None
 
         view = uis.Multiple_Buttons(
@@ -121,11 +122,6 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             ]
         )
 
-        # Checks the message and makes sure we have a message
-        msg = None
-        if Interaction.message is None:
-            raise ValueError("Interaction.message is None")
-
         if type(Interaction.channel) is not discord.TextChannel:
             raise ValueError("Command called not in a text channel!")
 
@@ -134,7 +130,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         self.confirmInteract = msg
 
     async def process_gameInput(
-        self, ctx: commands.Context, game: typing.Optional[str]
+        self, Interaction: discord.Interaction, game: typing.Optional[str]
     ) -> bool:
         for possibleGames in self.games:
 
@@ -148,7 +144,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
 
             if gameName == game:
                 self.chosenGame = game  # type: ignore
-                await self.game_preLoad(ctx, [orGameName])
+                await self.game_preLoad(Interaction, [orGameName])
                 return True
 
             # Suport for game name aliases
@@ -156,7 +152,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
                 aliases = possibleGames.aliases
                 if game in aliases:
                     self.chosenGame = game  # type: ignore
-                    await self.game_preLoad(ctx, [orGameName])
+                    await self.game_preLoad(Interaction, [orGameName])
                     return True
 
             except AttributeError:
@@ -164,36 +160,38 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
                     f"{orGameName} has no attribute `aliases` please refer to src.games.README.md for more information"
                 )
 
-        await ctx.send("Game not found in currently loaded games...")
+        await Interaction.response.send_message("Game not found in currently loaded games...")
         return False
 
-    @commands.hybrid_command(aliases=["play"])
-    async def playgame(self, ctx: commands.Context, game: typing.Optional[str]):
+    @app_commands.command()
+    async def playgame(self, Interaction: discord.Interaction, game: typing.Optional[str]):
         """
         Choose a game to gamble coins on!
 
         Args:
             game (option, str): Tries and loads you straight into that game
         """
-        self.account = await bank.Player_Status.get_by_id(ctx.author.id)
+        self.account = await bank.Player_Status.get_by_id(Interaction.user.id)
 
         # Check for account paid debt
         if (
             self.account.last_paid_debt
             and (datetime.now() - self.account.last_paid_debt).days > 7
         ):
-            return await ctx.reply(
-                "You're prohibited to play any games since you have debts and you didn't paid any for a week straight. Go pay your debt to play the game!"
+            return await Interaction.response.send_message(
+                "You're prohibited to play any games since you have debts and you didn't paid any for a week straight. Go pay your debt to play the game!",
+                ephemeral=True
             )
         # Check for unlucky being 1 (impossible)
         if self.account.unlucky == 1:
-            return await ctx.reply(
-                "Oh oh! Seems likes you can't win any games. Come back in a while, you might be more lucky then."
+            return await Interaction.response.send_message(
+                "Oh oh! Seems likes you can't win any games. Come back in a while, you might be more lucky then.",
+                ephemeral=True
             )
 
         # Process the inputted game
         if game is not None and game != "":
-            result = await self.process_gameInput(ctx, game)
+            result = await self.process_gameInput(Interaction, game)
             # Return if succesffully found game
             if result:
                 return
@@ -212,7 +210,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             try:
                 gameName = gameInfo.modName
             except AttributeError:
-                self.logger.warning(f"{gameName} has no attribute `modName`")
+                self.logger.warning(f"{gameInfo} has no attribute `modName`")
 
             gameOptions.append(
                 discord.SelectOption(label=gameName, description=desc, emoji=emoji)
@@ -223,7 +221,8 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             options=gameOptions,
         )
         try:
-            self.msg = await ctx.send("Pick a game to play!", view=view)
+            self.msg = Interaction
+            await Interaction.response.send_message("Pick a game to play!", view=view)
         except discord.errors.HTTPException as HTTP:
             self.logger.error("Http error whilst trying to send message")
             self.logger.debug(HTTP)
