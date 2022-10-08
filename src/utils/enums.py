@@ -1,5 +1,8 @@
 import aenum
+
 from .bank import Effect
+
+
 class Items(aenum.Enum):
     _init_ = "value __doc__ __name__ __price__"
     _order_ = "coin_multiplier lucky_potion wipe_effect"

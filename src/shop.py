@@ -29,7 +29,8 @@ class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
         if not item:
             embed = discord.Embed(title="Shop", description="Buy an item from the shop")
             for item in Items:
-                embed.add_field(name=item.name, value=f"{item.value.__price__} coins")
+                embed.add_field(name=item.name, value=f"Price: {item.__price__} coins\nDescription: {item.__doc__}")
+            await ctx.send(embed=embed)
         
     
 

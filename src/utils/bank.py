@@ -1,15 +1,14 @@
 import dataclasses
 import logging
 import os
+import random
 import traceback
 import typing
 from datetime import datetime
-import random
+
 import discord
-from discord.ext import commands
-
 import orjson as json
-
+from discord.ext import commands
 
 from .fileHandler import FileHandler
 
@@ -35,28 +34,28 @@ class Effect:
     coin_multiplier: float
     expire_time: datetime = None
     game_name: str = None
-    
+
     def activate(self, game_name=None):
         """
         Helper function to activate an effect (by add expire and optionally restrict it to a game)
         """
         self.expire_time = datetime.now() + datetime.timedelta(minutes=10)
         self.game_name = game_name
-    
+
     @classmethod
     def coin_multiplier(cls, coin_multiplier: float):
         """
         Create a coin multiplier effect
         """
         return cls("coin multiplier", 1, 1, coin_multiplier)
-    
+
     @classmethod
     def lucky_potion(cls):
         """
         Create a lucky potion effect
         """
-        return cls("lucky potion", random.randint(2,4), 1, 1)
-    
+        return cls("lucky potion", random.randint(2, 4), 1, 1)
+
     @classmethod
     def wipe_effect(cls):
         """
