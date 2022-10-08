@@ -5,7 +5,6 @@ from _typeshed import Incomplete
 from datetime import datetime
 from discord.ext import commands as commands
 
-logger: Incomplete
 bot: typing.Optional[commands.Bot]
 
 class Effect:
