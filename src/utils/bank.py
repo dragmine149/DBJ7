@@ -1,8 +1,6 @@
 import dataclasses
-import logging
 import os
 import random
-import traceback
 import typing
 from datetime import datetime
 
@@ -12,8 +10,6 @@ import orjson as json
 from discord.ext import commands
 
 from .fileHandler import FileHandler
-
-logger = logging.getLogger("bot.src.utils.bank")
 
 bot: typing.Optional[commands.Bot] = None
 
@@ -102,10 +98,8 @@ class Player_Status:
         try:
             data = await FileHandler().ReadFile(f"{user_id}.json")
         except FileNotFoundError:
-            logger.warning(f"File not found for {user_id}. Creating new user")
             return await cls.initialize_new_user(user_id)
         except json.JSONDecodeError:
-            logger.error(f"json data saved incorrectly! Resting user {user_id} data!")
             return await cls.initialize_new_user(user_id)
 
         try:
@@ -127,13 +121,9 @@ class Player_Status:
             # Can we make this so it attempts to fix data instead of reseting data?
             # It probably shouldn't happen a lot but just in case, would be nice if we can fix before we reset.
             # I don't know, can we though?
-            logger.error("Data file structure changed! Resetting data!!")
-            logger.info(traceback.format_exc())
             return await cls.initialize_new_user(user_id)
         except TypeError:
             # Going to assume that the data is broken, so once again remaking it.
-            logger.error("Type error in returning data strucutre")
-            logger.info(traceback.format_exc())
             return await cls.initialize_new_user(user_id)
 
     @classmethod
@@ -188,9 +178,6 @@ class Player_Status:
     def __setattr__(self, __name: str, __value: typing.Any) -> None:
         if __name == "user":
             self.__dict__[__name] = __value
-        logger.info(
-            f"Transaction triggered from {self.user} to {__name} with value of {__value}"
-        )
         self.__dict__[__name] = __value
         bot.loop.create_task(self.save())
 
