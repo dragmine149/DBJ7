@@ -2,8 +2,7 @@ import dataclasses
 import os
 import random
 import typing
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import aenum
 import discord
