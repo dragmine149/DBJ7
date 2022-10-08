@@ -42,20 +42,34 @@ class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
     @commands.hybrid_group()
     async def shop(self, ctx: commands.Context):
         """Shop commands"""
+    
+    @shop.command()
+    async def list(self, ctx: commands.Context):
+        """List all the items in the shop
+        """
+        embed = discord.Embed(
+                title="Shop", description="Buy an item from the shop")
+
+        for item in Items:
+            embed.add_field(
+                name=item.name,
+                value=f"Price: {item.__price__} coins\nDescription: {item.__doc__}",
+            )
+
+        await ctx.send(embed=embed)
 
     @shop.command()
-    async def buy(self, ctx: commands.Context, item: Items = None, amount: int = 1):
-        """Buy an item"""
+    async def buy(self, ctx: commands.Context, item: Items, amount: int = 1):
+        """Buy an item
+        Args:
+            item (Items): The item you want to buy
+            amount (int, optional): The amount of said item you want to buy. Defaults to 1.
+        """
         await ctx.defer()
         account = await bank.Player_Status.get_by_id(ctx.author.id)
         if not item:
-            embed = discord.Embed(title="Shop", description="Buy an item from the shop")
-            for item in Items:
-                embed.add_field(
-                    name=item.name,
-                    value=f"Price: {item.__price__} coins\nDescription: {item.__doc__}",
-                )
-            await ctx.send(embed=embed)
+            await ctx.send("Please specifiy an item to buy!")
+
         money = amount * item.__price__
         if account.money < money:
             return await ctx.reply(
@@ -86,8 +100,10 @@ class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
 
     @shop.command()
     async def sell(self, ctx: commands.Context, item: Items, amount: int = 1):
-        """
-        Sell some items that you bought! (if you are that desperate)
+        """Sell some items that you bought! (if you are that desperate)
+        Args:
+            item (Items): The item you want to sell
+            amount (int, optional): The amount of said item to sell. Defaults to 1.
         """
         account = await bank.Player_Status.get_by_id(ctx.author.id)
         if item.value not in account.inventory.items:
@@ -117,8 +133,11 @@ class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
 
     @shop.command()
     async def send_money(self, ctx: commands.Context, user: discord.User, amount: int):
-        """
-        Send some money to a user!
+        """Send some money to a user
+        Args:
+            ctx (commands.Context): _description_
+            user (discord.User): The user to send money to
+            amount (int): The amount of money to send to said user
         """
         account = await bank.Player_Status.get_by_id(ctx.author.id)
         if account.money < amount:
@@ -172,7 +191,11 @@ class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
 
     @inventory.command()
     async def use(self, ctx: commands.Context, item: Items, game_name=None):
-        """Use an item"""
+        """Use an item
+        Args:
+            item (Items): The item to use
+            game_name (_type_, optional): use said item on specific game. Defaults to None.
+        """
         account = await bank.Player_Status.get_by_id(ctx.author.id)
         item: bank.Effect = item.value
         if item.effect_name not in [
