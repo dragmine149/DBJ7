@@ -44,7 +44,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
         self.logger.info("initialized")
 
         self.chosenGame: str = ""
-        self.msg: discord.Interaction | None
+        self.msg: discord.Interaction | None = None
         bank.bot = bot
 
         observer = PollingObserver()
@@ -86,24 +86,25 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
                     self.logger.info(e)
                     self.logger.info(traceback.format_exc())
 
-                return  # stops the loop and the function
-
-    async def game_cancel(self, Interaction: discord.Interaction):
-        await Interaction.response.send_message("Canceled playing...", ephemeral=True)
+                return  # stops the loop and the function        
 
     async def game_premethod(self, Interaction: discord.Interaction, label: str):
-        await self.confirmInteract.delete()  # delete old stuff
+        await self.confirmInteract.delete_original_response()  # delete old stuff
 
         if label == "Play game!":
             return await self.game_select(Interaction)
         if label == "Cancel":
-            return await self.game_cancel(Interaction)
+            return await Interaction.response.send_message("Canceled playing...", ephemeral=True)
 
     async def game_preLoad(self, Interaction: discord.Interaction, data: list[str]):
         self.chosenGame = data[0]  # type: ignore
-        if self.msg is not None:
-            await self.msg.delete_original_response()  # delete dropdown
-            self.msg = None
+        try:
+            if self.msg is not None:
+                await self.msg.delete_original_response()  # delete dropdown
+                self.msg = None
+        except AttributeError:
+            self.logger.error("Idk how this happened")
+            self.logger.debug(traceback.format_exc())
 
         view = uis.Multiple_Buttons(
             [
@@ -122,12 +123,9 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             ]
         )
 
-        if type(Interaction.channel) is not discord.TextChannel:
-            raise ValueError("Command called not in a text channel!")
+        await Interaction.response.send_message(f"Play {self.chosenGame}?", view=view)
 
-        msg = await Interaction.channel.send(f"Play {self.chosenGame}?", view=view)
-
-        self.confirmInteract = msg
+        self.confirmInteract = Interaction
 
     async def process_gameInput(
         self, Interaction: discord.Interaction, game: typing.Optional[str]
@@ -236,6 +234,9 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             for option in gameOptions:
                 self.logger.debug(option)
             self.logger.info("-----------")
+        except discord.errors.InteractionResponded:
+            self.msg = Interaction
+            await Interaction.response.edit_message(content=f"Pick a game to play!", view=view)
 
     # reloads one game in particalar
     def reload_game(self, module: str) -> str:
