@@ -141,7 +141,7 @@ class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
         await ctx.send(embed=embed)
 
     @inventory.command()
-    async def use(self, ctx: commands.Context, item: Items):
+    async def use(self, ctx: commands.Context, item: Items, game_name=None):
         """Use an item"""
         account = await bank.Player_Status.get_by_id(ctx.author.id)
         if item.value not in account.inventory.items:
@@ -153,8 +153,22 @@ class Inventory_And_Shop(commands.Cog, name="Inventory and shop"):
                 )
             )
         account.inventory.items.remove(item.value)
-        account.effects.append(item.value)
-        item.value.activate()
+        if item.value in account.effects:
+            effect = None
+            for _effect in account.effects:
+                if _effect.value == item.value:
+                    effect = _effect.value
+                    break
+            if effect.game_name == game_name:
+                effect.expire_time = effect.expire_time + datetime.timedelta(minutes=10)
+            else:
+                account.effects.append(item.value)
+                item.value.activate(game_name)
+        elif item == Items.wipe_effect:
+            account.unlucky = 0
+        else:
+            account.effects.append(item.value)
+            item.value.activate(game_name)
         await ctx.reply(
             embed=discord.Embed(
                 title="Success",
