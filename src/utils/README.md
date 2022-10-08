@@ -14,7 +14,7 @@ A nice class for building information about effect that you want.
 
 ```py
 from .utils import bank
-bank.Effect.new_effect(
+bank.Effect.build_effect(
     effect_name: str,
     game_name: str
     effect_lucky_multiplier: float,
@@ -27,13 +27,9 @@ bank.Effect.new_effect(
 )
 ```
 
-Game name is for specific game so you can know if effect activated for this game or not
+Game name is for specific game so you can know if effect activated for this game or not and if game name exists game must use `effect_` prefix to access the unlucky/lucky for that game and `coin_multiplier` is also local for that game name too
 
 I already have some preset for this! Don't worry!
-
-```py
-
-```
 
 ## example code
 
