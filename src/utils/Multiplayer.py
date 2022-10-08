@@ -24,15 +24,28 @@ class Multiplayer:
 
         self.data: typing.Dict[str, int] = {}
         self.game = name
+        self.callbackFunc = self.defaultCallback
 
     async def MoneyCallback(self, value: int, user: discord.Member):
         self.data[str(user.id)] = value
 
+    async def skipCallback(self, value: int, user: discord.Member):
+        await self.callback(value)
+
     async def AskCallback(self, Interaction: discord.Interaction, label: str):
         if label == "yes":
+            await Interaction.response.send_message(f"Waiting for {Interaction.user.mention} to place a bet...")
+            
+            self.data[str(Interaction.user.id)] = -10
+            MS = MoneySelector(Interaction, self.MoneyCallback, True)
+            await MS.get_money()
+            
             await self.Invite(Interaction, label)
+            
         if label == "no":
-            await self.callback()
+            await Interaction.response.send_message("Loading money class")
+            MS = MoneySelector(Interaction, self.skipCallback)
+            await MS.get_money()
 
     async def Ask(self):
         """Ask the user if they want to play multiplayer"""
@@ -109,18 +122,26 @@ class Multiplayer:
         )
 
         self.InviteMsg = Interaction
-        await Interaction.response.send_message(
+        await Interaction.edit_original_response(
             f"Press the button to play with: {self.owner.mention} in {self.game}",
             view=self.buttonView,
         )
         await self.callback()
+    
+    async def defaultCallback(self, Interaction: discord.Interaction, value):
+        logger.warning("Multiplayer function was called without any callbacks!")
+        await Interaction.edit_original_response(content="Multiplayer function had no callback! Cancled!")
 
-    async def callback(self):
+    async def callback(self, value:int=-1):
         """Waits for information before sending back data
 
         Returns:
             Inforamtion: Calls the function inputed.
         """
+        if value != -1:
+            # Returns if they say no to multipalyer
+            return await self.callbackFunc(self.Interaction, value)
+        
         await self.buttonView.wait()
 
         waiting_for = []
@@ -134,7 +155,7 @@ class Multiplayer:
 
         msg += "\nTo place a bet"
 
-        await self.Interaction.edit_original_response(msg)
+        await self.Interaction.edit_original_response(content=msg)
 
         if self.callbackFunc is None:
             logger.error("cbk is set to none! Can't return data")
