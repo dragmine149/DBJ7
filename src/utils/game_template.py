@@ -20,7 +20,7 @@ class Template:
         self.bet: int = 0
         self.interaction: discord.Interaction = None  # type: ignore
 
-    async def money_callback(self, value: int, user: discord.Member) -> None:
+    async def money_callback(self, value: int) -> None:
         raise NotImplemented
 
     async def start(self, interaction: discord.Interaction) -> typing.NoReturn:

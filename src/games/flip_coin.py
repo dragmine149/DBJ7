@@ -7,7 +7,7 @@ from discord.ext import commands
 
 from src.utils import bank, game_template, uis
 from src.utils.enums import Coin_State, Items
-from src.utils.Multiplayer import Multiplayer
+from src.utils.MoneySelector import MoneySelector
 
 logger = logging.getLogger("games.flip_coin.log")
 logger.info("Initalized")
@@ -58,6 +58,7 @@ class FlipCoin(game_template.Template):
             if unlucky < 0:
                 unlucky = 0
         if unlucky < 0.01:
+            self.account.unlucky = 0.01
             unlucky = 0.01
             logger.warning(
                 f"{self.user.name} ({self.user.id}) has a unlucky percent of < 0.01 (very lucky) automatically set to 0.01!"
@@ -111,8 +112,6 @@ class FlipCoin(game_template.Template):
     async def pre_game(self):
         # Do this in another function, so that we don't skip over the money input, although is there a better way to do this?
 
-        # await self.Interaction.edit_original_response(content=bank.Player_Status(self.Interaction.user.id))
-
         view = uis.Multiple_Buttons()
         view.Add_Button(
             "Heads", self.on_button_click, style=discord.ButtonStyle.primary
@@ -125,14 +124,10 @@ class FlipCoin(game_template.Template):
             content="Please select an option", view=view
         )
         await view.wait()
-
-    async def MultiCallback(self, Interaction: discord.Interaction, data):
-        await Interaction.followup.send(
-            f"Retrieved {data} from multiplayer info", ephemeral=True
-        )
-        if type(data) == int:
-            self.betValue = data
-            return await self.pre_game()
+        
+    async def money_callback(self, value: int):
+        self.betValue = value
+        await self.pre_game()
 
     async def start(self, Interaction: discord.Interaction):
         logger.info("Started flipping a coin")
@@ -140,9 +135,7 @@ class FlipCoin(game_template.Template):
         self.Interaction = Interaction
 
         await Interaction.response.send_message("Loading game data...")
-
-        self.mp = Multiplayer(Interaction, "flip coin", 2)
-        await self.mp.start(self.MultiCallback)
+        await MoneySelector(Interaction, self.money_callback).get_money()
 
 
 def game_setup(bot):
