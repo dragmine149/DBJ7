@@ -4,7 +4,7 @@ from discord.ext import commands as commands
 from src.utils import bank as bank, game_template as game_template, uis as uis
 from src.utils.MoneySelector import MoneySelector as MoneySelector
 from src.utils.Multiplayer import Multiplayer as Multiplayer
-from src.utils.enums import Coin_State as Coin_State
+from src.utils.enums import Coin_State as Coin_State, Items as Items
 
 logger: Incomplete
 
