@@ -103,6 +103,7 @@ class FlipCoin(game_template.Template):
         await Interaction.response.send_message("Flipping...", ephemeral=True)
         await asyncio.sleep(1.5)
         if result:
+            coins *= 2
             if "coin_multiplier" in [
                 x.effect_name
                 for x in self.account.effects
