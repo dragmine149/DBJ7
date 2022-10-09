@@ -26,18 +26,33 @@ class GuessNumber(game_template.Template):
         await self.actually_starting_the_game_with_rapid_pace_on_god()
 
     async def easy(self, interaction: discord.Interaction, label: str):
+        if interaction.user.id != self.interaction.user.id:
+            return await interaction.response.send_message("You can not choose a difficult for this user!", ephemeral=True)
+        
         await self.start_game(10, interaction)
 
     async def medium(self, interaction: discord.Interaction, label: str):
+        if interaction.user.id != self.interaction.user.id:
+            return await interaction.response.send_message("You can not choose a difficult for this user!", ephemeral=True)
+        
         await self.start_game(25, interaction)
 
     async def hard(self, interaction: discord.Interaction, label: str):
+        if interaction.user.id != self.interaction.user.id:
+            return await interaction.response.send_message("You can not choose a difficult for this user!", ephemeral=True)
+
         await self.start_game(50, interaction)
 
     async def impossible(self, interaction: discord.Interaction, label: str):
+        if interaction.user.id != self.interaction.user.id:
+            return await interaction.response.send_message("You can not choose a difficult for this user!", ephemeral=True)
+
         await self.start_game(200, interaction)
 
     async def confirmation_yes(self, interaction: discord.Interaction, label: str):
+        if interaction.user.id != self.interaction.user.id:
+            return await interaction.response.send_message("You can not confirm for this user!", ephemeral=True)
+
         await interaction.response.defer()
         self.confirmed = True
         if self.number == self.answer:
@@ -90,10 +105,16 @@ class GuessNumber(game_template.Template):
             )  # type: ignore
 
     async def confirmation_no(self, interaction: discord.Interaction, label: str):
+        if interaction.user.id != self.interaction.user.id:
+            return await interaction.response.send_message("You can not cancel for this user!", ephemeral=True)
+        
         await interaction.response.send_message("Cancelled", ephemeral=True)
         self.confirmed = False
 
     async def start_game(self, range: int, interaction: discord.Interaction):
+        if interaction.user.id != self.interaction.user.id:
+            return await interaction.response.send_message("You can not start the game for this user!", ephemeral=True)
+        
         await interaction.response.defer()
         self.mapped = {10: 0.5, 25: 0.85, 50: 1, 200: 2}
         self.interaction = interaction

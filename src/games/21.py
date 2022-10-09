@@ -53,6 +53,9 @@ class twentyOne(game_template.Template):
         - Why?: why not
 
         """
+        if Interaction.user.id != self.interaction.user.id:
+            return await Interaction.response.send_message("You can not pull out for this user!", ephemeral=True)
+        
         moneyMulti = round(1 * self.score / math.pi / 0.01 * 69 / 10000, 3)
 
         if self.score == 21:
@@ -74,6 +77,9 @@ class twentyOne(game_template.Template):
         If user is unlucky we want the dice roles to be higher the nearer they get to 21
         So, higher unlucky = higher role, i think
         """
+        if Interaction.user.id != self.interaction.user.id:
+            return await Interaction.response.send_message("You can not roll a dice for this user!", ephemeral=True)
+        
         unluckLimit = random.randrange(10)
         maxLimit = 1
         if self.score >= unluckLimit:
