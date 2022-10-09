@@ -28,6 +28,7 @@ class Accounting(commands.Cog):
             decrease = random.randint(2, 8) / 10
             if account.unlucky - decrease < 0:
                 account.unlucky = 0
+            account.unlucky -= decrease
 
     async def add_non_existing_users(self):
         await self.bot.wait_until_ready()
