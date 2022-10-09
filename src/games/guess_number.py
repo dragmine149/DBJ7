@@ -20,6 +20,7 @@ class GuessNumber(game_template.Template):
         self.interaction: discord.Interaction = None  # type: ignore
         self.account: bank.Player_Status = None  # type: ignore
         self.confirmed = False
+        self.modName = "Guess number"
 
     async def callback_money(self, value: int, user):
         self.bet = value

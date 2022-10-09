@@ -3,7 +3,7 @@ import typing
 from datetime import datetime, timedelta
 
 import discord
-from discord.ext import commands
+from discord.ext import commands,tasks
 
 from .utils import bank
 
@@ -17,6 +17,19 @@ class Accounting(commands.Cog):
         self.bot = bot
         bank.bot = self.bot
         self.bot.loop.create_task(self.add_non_existing_users())
+        self.unluckiness_decreaser.start()
+        
+    @tasks.loop(hours=12)
+    async def unluckiness_decreaser(self):
+        for user in self.bot.users:
+            account = await bank.Player_Status.get_by_id(user.id)
+            if account.unlucky >= 0.25:
+                continue
+            decrease = random.randint(2,8) / 10
+            if account.unlucky - decrease < 0:
+                account.unlucky = 0
+                
+
 
     async def add_non_existing_users(self):
         await self.bot.wait_until_ready()
