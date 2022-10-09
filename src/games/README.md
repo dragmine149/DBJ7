@@ -38,9 +38,13 @@ def game_setup(bot):
 
 The location of the file should be in `/src/games` (where this readme file is)
 
-### Optional (But recommened) requirements
+### Optional (But Highhly recommened) requirements
 
 There are also other things that can be added to make the UX better, these are listed below.
+
+#### Money Selector
+
+These few lines open up a ui in discord that contains buttons to select how much more the user wants to bet on the games outcome. If you use this, module, then having Bank module is also highly recommended.
 
 ```py
 # Money selector ui
@@ -49,15 +53,19 @@ from src.utils.MoneySelector import MoneySelector
 def moneyCallback(Interaction: discord.Interaction, value: int):
     print(f"Retrieved {int}")
 
-main = MoneySelector(interaction, moneyCallback)
+main = MoneySelector(Interaction, moneyCallback)
 main.get_money()
 ```
+
+#### Aliases and Name
 
 There are other features that can be put in the class as well to save the user time or to make it look better.
 Some of these features include aliases or modName.
 
 Aliases lets the user enter one of the alvalible inputs for all of them to work, user has to enter less, win win.
 modName just is there to make it look better. For example instead of sending `gameTest` to the user, they can send `game test` which looks better and can be easier to read. (It's called modName to avoid conflicts with other information)
+
+modName works like another aliases to the normal view. But it also has another reason. By deafult, `gameTest` would be used for names of dropdowns and other small things. However having a `modName` tag, will use that instead of the class name. Making it look better in the dropdown menu whilst not breaking the python ruling system (no spaces in names of variables)
 
 These **Must** go below the doc string otherwise the info wont work.
 
@@ -69,7 +77,9 @@ class gameTest:
 
 ## Testing the file
 
-Due to the nature of how these files are loaded, there is no need to restart the bot after each load, just run the command `{prefix}reloadgames`.
+Due to the nature of how these files are loaded, there is no need to restart the bot after each load, just run the command `{prefix}reloadgames`. You can also run `{prefix}reloadgames {game Module}` to reload one game.
+
+NOTE: If the bot raises a warning saying that the file reloader might have broken, you might have to restart the whole bot.
 
 This will reload all games currently loaded in,. No new games will be loaded though, that will need a bot restart. (Change?)
 
