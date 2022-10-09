@@ -18,7 +18,7 @@ class Stuff(
     """
 
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: discord.Client = bot
 
     @property
     def display_emoji(self):
@@ -36,8 +36,13 @@ class Stuff(
             title="Credits", description="Thanks to everyone who using this bot!"
         )
 
-        embed.add_field(name="Creator", value="<@890913140278181909>")
-        embed.add_field(name="Creator", value="<@467718535897022479>")
+        drag: discord.User = await self.bot.fetch_user(890913140278181909)
+        timeless: discord.User = await self.bot.fetch_user(467718535897022479)
+        Catalysm: discord.User = await self.bot.fetch_user(530250169191759931)
+
+        embed.add_field(name="Creator", value=drag.mention)
+        embed.add_field(name="Creator", value=timeless.mention)
+        embed.add_field(name="logo", value=Catalysm.mention)
 
         ButtonView = uis.Multiple_Buttons(
             [
