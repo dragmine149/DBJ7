@@ -136,6 +136,10 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
     async def process_gameInput(
         self, ctx: commands.Context, game: typing.Optional[str]
     ) -> bool:
+        
+        if ctx.author.id != self.pguser.id:
+            return await ctx.send("You can not use this interaction!", ephemeral=True)
+        
         for possibleGames in self.games:
 
             orGameName = type(possibleGames).__name__
@@ -175,6 +179,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             game (option, str): Tries and loads you straight into that game
         """
         self.account = await bank.Player_Status.get_by_id(ctx.author.id)
+        self.pguser = ctx.author
 
         # Check for account paid debt
         if (
