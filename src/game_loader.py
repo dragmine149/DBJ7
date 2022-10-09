@@ -223,6 +223,7 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
             )
         view = uis.DropdownView(
             callback=self.game_preLoad,
+            owner=ctx.author
             placeholder="Select game to play",
             options=gameOptions,
         )

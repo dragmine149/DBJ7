@@ -89,13 +89,17 @@ class Dropdown(ui.Select):
     Shows a dropdown menu of items
     """
 
-    def __init__(self, callback=None, **kwargs):
+    def __init__(self, callback=None, owner=None, **kwargs):
         super().__init__(**kwargs)
         self.callbackFunc = callback
+        self.owner = owner
         if self.callbackFunc is None:
             self.callbackFunc = self.defaultCallback
 
     async def callback(self, interaction: discord.Interaction):
+        if interaction.user.id != self.owner.id:
+            return await interaction.response.send_message("You can not control this dropdown!", ephemeral=True)
+        
         await self.callbackFunc(
             interaction, self.values
         )  # calls the callback function so the data result can be processed somewhere else
@@ -103,6 +107,9 @@ class Dropdown(ui.Select):
     async def defaultCallback(
         self, interaction: discord.Interaction, values: list[str]
     ):
+        if interaction.user.id != self.owner.id:
+            return await interaction.response.send_message("You can not control this dropdown!", ephemeral=True)
+        
         # The default callback function if nothing selected
         await interaction.response.send_message(f"You choice: {values[0]}")
         logger.warn("Default callback used! Please assign a callback!")
@@ -113,7 +120,7 @@ class DropdownView(ui.View):
     Main dropdown view class
     """
 
-    def __init__(self, callback=None, **kwargs):
+    def __init__(self, callback=None, owner=None, **kwargs):
         """
         Args:
             callback (function, optional): The function to call (just have the name, not the actuall call) when something happense. Requires discord.Interaction input
@@ -123,8 +130,8 @@ class DropdownView(ui.View):
             options (list, optional): The options to show in the ui. Defaults to [].
         """
         super().__init__(timeout=None)
-        self.add_dropdown(callback, **kwargs)
+        self.add_dropdown(callback, owner, **kwargs)
 
-    def add_dropdown(self, callback=None, **kwargs):
+    def add_dropdown(self, callback=None, owner=None, **kwargs):
         """If you want to add a new dropdown menu in the ui you can. Just not recommened."""
-        self.add_item(Dropdown(callback, **kwargs))
+        self.add_item(Dropdown(callback, owner, **kwargs))
