@@ -136,10 +136,10 @@ class game_loader(commands.Cog, name="Games"):  # type: ignore
     async def process_gameInput(
         self, ctx: commands.Context, game: typing.Optional[str]
     ) -> bool:
-        
+
         if ctx.author.id != self.pguser.id:
             return await ctx.send("You can not use this interaction!", ephemeral=True)
-        
+
         for possibleGames in self.games:
 
             orGameName = type(possibleGames).__name__
