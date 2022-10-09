@@ -1,4 +1,4 @@
-# Gambliting
+# Gambility
 
 A discord bot made for the discord bot jam 7 game jam.
 Made in one week.
