@@ -1,5 +1,7 @@
 # Gambility
 
+**NOTICE:** The bot state is "Finished" and will most likely not be updated again. This is because it was only designed as an entry for the jam and we have no intentions of keeping active support on it.
+
 A discord bot made for the discord bot jam 7 game jam.
 Made in one week.
 
