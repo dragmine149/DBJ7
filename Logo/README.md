@@ -18,3 +18,7 @@ Videos / images showcasing this bot do not need to be credited as long as they h
 i can't draw
  - timelessnesses
 -->
+
+### Final.png
+
+- CatalsymCake (Thanks for this amazing logo drawing. Really fits the theme --drag)
