@@ -98,8 +98,10 @@ class Dropdown(ui.Select):
 
     async def callback(self, interaction: discord.Interaction):
         if interaction.user.id != self.owner.id:
-            return await interaction.response.send_message("You can not control this dropdown!", ephemeral=True)
-        
+            return await interaction.response.send_message(
+                "You can not control this dropdown!", ephemeral=True
+            )
+
         await self.callbackFunc(
             interaction, self.values
         )  # calls the callback function so the data result can be processed somewhere else
@@ -108,8 +110,10 @@ class Dropdown(ui.Select):
         self, interaction: discord.Interaction, values: list[str]
     ):
         if interaction.user.id != self.owner.id:
-            return await interaction.response.send_message("You can not control this dropdown!", ephemeral=True)
-        
+            return await interaction.response.send_message(
+                "You can not control this dropdown!", ephemeral=True
+            )
+
         # The default callback function if nothing selected
         await interaction.response.send_message(f"You choice: {values[0]}")
         logger.warn("Default callback used! Please assign a callback!")
