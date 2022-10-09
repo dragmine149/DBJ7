@@ -158,6 +158,9 @@ class MoneySelector:
         )
 
     async def FinishedCallback(self, Interaction: discord.Interaction, label: str):
+        if Interaction.user.id != self.owner.id:
+            return await Interaction.response.send_message("You can not confirm on this persons behalf!", ephemeral=True)
+        
         view = uis.Multiple_Buttons(
             [
                 {
