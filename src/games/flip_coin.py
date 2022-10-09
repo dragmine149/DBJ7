@@ -93,8 +93,10 @@ class FlipCoin(game_template.Template):
 
     async def on_button_click(self, Interaction: discord.Interaction, label: str):
         if Interaction.user.id != self.user.id:
-            return await Interaction.response.send_message("You are not allowed to flip the coin.", ephemeral=True)
-        
+            return await Interaction.response.send_message(
+                "You are not allowed to flip the coin.", ephemeral=True
+            )
+
         self.choosen = Coin_State(label.lower())
         self.account = await bank.Player_Status.get_by_id(Interaction.user.id)
         result = self.flip_coin(self.account.unlucky, Coin_State[label.lower()])  # type: ignore
@@ -103,6 +105,7 @@ class FlipCoin(game_template.Template):
         await Interaction.response.send_message("Flipping...", ephemeral=True)
         await asyncio.sleep(1.5)
         if result:
+            coins *= 2
             if "coin_multiplier" in [
                 x.effect_name
                 for x in self.account.effects
