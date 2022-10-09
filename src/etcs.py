@@ -35,10 +35,12 @@ class Stuff(
         embed = discord.Embed(
             title="Credits", description="Thanks to everyone who using this bot!"
         )
-
-        embed.add_field(name="Creator", value="<@890913140278181909>")
-        embed.add_field(name="Creator", value="<@467718535897022479>")
-        embed.add_field(name="Logo designer",value="<@530250169191759931>")
+        timeless = await self.bot.fetch_user(890913140278181909)
+        dragmine = await self.bot.fetch_user(467718535897022479)
+        cakey = await self.bot.fetch_user(530250169191759931)
+        embed.add_field(name="Creator", value=f"{dragmine.mention} ({str(dragmine)})")
+        embed.add_field(name="Creator", value=f"{timeless.mention} ({str(timeless)})")
+        embed.add_field(name="Logo designer",value=f"{cakey.mention} ({str(cakey)})")
         ButtonView = uis.Multiple_Buttons(
             [
                 {
