@@ -1,6 +1,6 @@
 # Artwork
 
-All artwork and images provided for the bot have been taken from a free website or created by either Dragmine149 or timelessnesses. 
+All artwork and images provided for the bot have been taken from a free website or created by either Dragmine149 or timelessnesses.
 Not all artwork in this folder was used on the bot.
 
 ## Usage
