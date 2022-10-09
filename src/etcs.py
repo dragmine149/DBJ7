@@ -18,7 +18,7 @@ class Stuff(
     """
 
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: discord.Client = bot
 
     @property
     def display_emoji(self):

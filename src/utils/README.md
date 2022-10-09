@@ -28,7 +28,7 @@ The multiplier will be globally IF game name isn't set else it will be locally f
 
 I already have some preset for this! Don't worry!
 
-## example code
+## Example code
 
 ```py
 from .utils import bank
