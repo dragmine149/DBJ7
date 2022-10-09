@@ -63,26 +63,22 @@ class twentyOne(game_template.Template):
         if self.score == 21:
             moneyMulti = round(moneyMulti, 1)
         if "coin_multiplier" in [
-                x.effect_name
-                for x in self.account.effects
-                if x.effect_name == "coin_multiplier"
-            ] and (
-                not [
-                    x
-                    for x in self.account.effects
-                    if x.effect_name == "coin_multiplier"
-                ][0].game_name
-                or [
-                    x
-                    for x in self.account.effects
-                    if x.effect_name == "coin_multiplier"
-                ][0].game_name.lower()
-                == "flip_coin"
-            ):
-                for effect in self.account.effects:
-                    if effect.effect_name == "coin_multiplier":
-                        break
-                moneyMulti += effect.coin_multiplier
+            x.effect_name
+            for x in self.account.effects
+            if x.effect_name == "coin_multiplier"
+        ] and (
+            not [x for x in self.account.effects if x.effect_name == "coin_multiplier"][
+                0
+            ].game_name
+            or [x for x in self.account.effects if x.effect_name == "coin_multiplier"][
+                0
+            ].game_name.lower()
+            == "flip_coin"
+        ):
+            for effect in self.account.effects:
+                if effect.effect_name == "coin_multiplier":
+                    break
+            moneyMulti += effect.coin_multiplier
         moneyReward = int(self.betValue * moneyMulti)
         self.account.money += int(moneyReward)
 
