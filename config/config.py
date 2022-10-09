@@ -19,4 +19,6 @@ git_repo = (
     subprocess.check_output("git config --get remote.origin.url".split(" "))
     .decode("ascii")
     .strip()
-)[:-4]
+)
+
+git_repo = git_repo[:-4] if ".git" in git_repo else git_repo

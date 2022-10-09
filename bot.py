@@ -126,6 +126,8 @@ async def on_message(message: discord.Message):
         await bot.process_commands(message)
     elif "reloadgames" in message.content:
         await bot.process_commands(message)
+    elif "raise" in message.content:
+        await bot.process_commands(message)
 
 
 def handler(x, y):

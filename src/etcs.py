@@ -38,7 +38,7 @@ class Stuff(
 
         embed.add_field(name="Creator", value="<@890913140278181909>")
         embed.add_field(name="Creator", value="<@467718535897022479>")
-
+        embed.add_field(name="Logo designer",value="<@530250169191759931>")
         ButtonView = uis.Multiple_Buttons(
             [
                 {
@@ -49,7 +49,7 @@ class Stuff(
                 },
                 {
                     "label": "itch.io",
-                    "url": "https://itch.io",
+                    "url": "https://timelessnesses.itch.io/gambility",
                     "style": discord.ButtonStyle.primary,
                     # No emoji for itch (Can't find one)
                 },
